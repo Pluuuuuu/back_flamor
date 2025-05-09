@@ -100,6 +100,12 @@ Payment.hasOne(Order, { foreignKey: "payment_id" });
 Product.hasMany(Wishlist, { foreignKey: "product_id" });
 Wishlist.belongsTo(Product, { foreignKey: "product_id" });
 
+
+// Associate product variants with colors
+ProductColor.hasMany(ProductVariant, { foreignKey: "color_id" });
+ProductVariant.belongsTo(ProductColor, { foreignKey: "color_id" });
+
+
 // Export all
 export {
   User,
