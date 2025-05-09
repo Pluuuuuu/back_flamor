@@ -1,89 +1,132 @@
 import { useRef, useState } from "react";
 import axios from "axios";
-import "../styles/AuthForm.css";
+import { useNavigate } from "react-router-dom"; // used to redirect user after login
+import "../styles/AuthForm.css"; // keep your existing CSS file
 
 const AuthForm = () => {
+  // Refs to DOM elements used to animate the form transition between login and signup
   const loginRef = useRef(null);
   const signupRef = useRef(null);
 
+  // React Router navigation hook – used to redirect to another page (like /profile)
+  const navigate = useNavigate();
+
+  // -------------------- STATE --------------------
+
+  // Stores signup form input values: name, email, password
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
+  // Stores login form input values: email, password
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
+  // Display error or success messages after API responses
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // -------------------- FORM SWITCHING ANIMATIONS --------------------
+
+  // Show login form (used when clicking "Log in" toggle or after signing up)
   const handleLoginClick = () => {
     const parent = loginRef.current.closest(".login");
+
     if (!parent.classList.contains("slide-up")) {
       parent.classList.add("slide-up");
     } else {
+      // If already showing login, animate to signup instead
       signupRef.current.classList.add("slide-up");
       parent.classList.remove("slide-up");
     }
   };
 
+  // Show signup form (used when clicking "Sign up" toggle)
   const handleSignupClick = () => {
     const parent = signupRef.current;
+
     if (!parent.classList.contains("slide-up")) {
       parent.classList.add("slide-up");
     } else {
+      // If already showing signup, animate to login instead
       loginRef.current.closest(".login").classList.add("slide-up");
       parent.classList.remove("slide-up");
     }
   };
 
+  // -------------------- AXIOS SETUP --------------------
+
+  // Custom Axios instance to reuse base URL and include cookies
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000/api",
-    withCredentials: true,
+    baseURL: "http://localhost:5000/api", // backend URL
+    withCredentials: true, // required to send/receive cookies for auth
   });
+
+  // -------------------- SIGNUP HANDLER --------------------
 
   const handleSignup = async () => {
     try {
       setError("");
       setSuccess("");
 
+      // Send POST request to /auth/signup with the input values
       const response = await axiosInstance.post("/auth/signup", {
         ...signupData,
-        role: "customer", // signup always defaults to user
+        role: "customer", // hardcoded role assignment for new users
       });
 
+      // Show success message returned by backend
       setSuccess(response.data.message);
+
+      // ✅ After successful signup, trigger transition to login form
+      handleLoginClick(); // this visually switches to login
     } catch (err) {
+      // Show error if signup fails
       setError(err.response?.data?.message || "Signup failed");
     }
   };
+
+  // -------------------- LOGIN HANDLER --------------------
 
   const handleLogin = async () => {
     try {
       setError("");
       setSuccess("");
 
+      // Send POST request to /auth/login with login form values
       const response = await axiosInstance.post("/auth/login", loginData);
 
+      // Show success message returned by backend
       setSuccess(response.data.message);
-      // Optional: handle redirect or token storage
+
+      // ✅ Redirect user to /profile after successful login
+      navigate("/profile"); // handled via React Router
     } catch (err) {
+      // Show error if login fails
       setError(err.response?.data?.message || "Login failed");
     }
   };
 
+  // -------------------- JSX RETURN --------------------
+
   return (
     <div className="form-structor">
+      {/* Global message display */}
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
 
+      {/* -------------------- SIGNUP FORM -------------------- */}
       <div className="signup" ref={signupRef}>
+        {/* Toggle title: when clicked, switches to signup view */}
         <h2 className="form-title" id="signup" onClick={handleSignupClick}>
           <span>or</span>Sign up
         </h2>
+
+        {/* Signup form inputs */}
         <div className="form-holder">
           <input
             type="text"
@@ -113,16 +156,22 @@ const AuthForm = () => {
             }
           />
         </div>
+
+        {/* Submit signup button */}
         <button className="submit-btn" onClick={handleSignup}>
           Sign up
         </button>
       </div>
 
+      {/* -------------------- LOGIN FORM -------------------- */}
       <div className="login slide-up">
         <div className="center" ref={loginRef}>
+          {/* Toggle title: when clicked, switches to login view */}
           <h2 className="form-title" id="login" onClick={handleLoginClick}>
             <span>or</span>Log in
           </h2>
+
+          {/* Login form inputs */}
           <div className="form-holder">
             <input
               type="email"
@@ -143,6 +192,8 @@ const AuthForm = () => {
               }
             />
           </div>
+
+          {/* Submit login button */}
           <button className="submit-btn" onClick={handleLogin}>
             Log in
           </button>
@@ -155,7 +206,9 @@ const AuthForm = () => {
 export default AuthForm;
 
 
-//isusue
+
+
+//WORKING BUT MINUS
 // import { useRef, useState } from "react";
 // import axios from "axios";
 // import "../styles/AuthForm.css";
@@ -169,6 +222,7 @@ export default AuthForm;
 //     email: "",
 //     password: "",
 //   });
+
 //   const [loginData, setLoginData] = useState({
 //     email: "",
 //     password: "",
@@ -177,7 +231,6 @@ export default AuthForm;
 //   const [error, setError] = useState("");
 //   const [success, setSuccess] = useState("");
 
-//   // Animate Slide Up / Down
 //   const handleLoginClick = () => {
 //     const parent = loginRef.current.closest(".login");
 //     if (!parent.classList.contains("slide-up")) {
@@ -198,9 +251,8 @@ export default AuthForm;
 //     }
 //   };
 
-//   // Axios Config (with credentials for cookies)
 //   const axiosInstance = axios.create({
-//     baseURL: "http://localhost:5000/api", // Change to your backend base URL
+//     baseURL: "http://localhost:5000/api",
 //     withCredentials: true,
 //   });
 
@@ -211,7 +263,7 @@ export default AuthForm;
 
 //       const response = await axiosInstance.post("/auth/signup", {
 //         ...signupData,
-//         role: "user", // or any default role
+//         role: "customer", // signup always defaults to user
 //       });
 
 //       setSuccess(response.data.message);
@@ -228,7 +280,7 @@ export default AuthForm;
 //       const response = await axiosInstance.post("/auth/login", loginData);
 
 //       setSuccess(response.data.message);
-//       // Optionally redirect or update auth state
+//       // Optional: handle redirect or token storage
 //     } catch (err) {
 //       setError(err.response?.data?.message || "Login failed");
 //     }
@@ -305,78 +357,6 @@ export default AuthForm;
 //           <button className="submit-btn" onClick={handleLogin}>
 //             Log in
 //           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AuthForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useRef } from "react";
-// import "../styles/AuthForm.css";
-
-// const AuthForm = () => {
-//   const loginRef = useRef(null);
-//   const signupRef = useRef(null);
-
-//   const handleLoginClick = () => {
-//     const parent = loginRef.current.closest(".login");
-//     if (!parent.classList.contains("slide-up")) {
-//       parent.classList.add("slide-up");
-//     } else {
-//       signupRef.current.classList.add("slide-up");
-//       parent.classList.remove("slide-up");
-//     }
-//   };
-
-//   const handleSignupClick = () => {
-//     const parent = signupRef.current;
-//     if (!parent.classList.contains("slide-up")) {
-//       parent.classList.add("slide-up");
-//     } else {
-//       loginRef.current.closest(".login").classList.add("slide-up");
-//       parent.classList.remove("slide-up");
-//     }
-//   };
-
-//   return (
-//     <div className="form-structor">
-//       <div className="signup" ref={signupRef}>
-//         <h2 className="form-title" id="signup" onClick={handleSignupClick}>
-//           <span>or</span>Sign up
-//         </h2>
-//         <div className="form-holder">
-//           <input type="text" className="input" placeholder="Name" />
-//           <input type="email" className="input" placeholder="Email" />
-//           <input type="password" className="input" placeholder="Password" />
-//         </div>
-//         <button className="submit-btn">Sign up</button>
-//       </div>
-
-//       <div className="login slide-up">
-//         <div className="center" ref={loginRef}>
-//           <h2 className="form-title" id="login" onClick={handleLoginClick}>
-//             <span>or</span>Log in
-//           </h2>
-//           <div className="form-holder">
-//             <input type="email" className="input" placeholder="Email" />
-//             <input type="password" className="input" placeholder="Password" />
-//           </div>
-//           <button className="submit-btn">Log in</button>
 //         </div>
 //       </div>
 //     </div>

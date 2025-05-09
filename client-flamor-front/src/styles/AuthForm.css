@@ -93,7 +93,7 @@ html, body {
 }
 
 .signup .submit-btn {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: #D991A4;
   color: rgba(255, 255, 255, 0.7);
   border: none;
   border-radius: 15px;
@@ -173,7 +173,7 @@ html, body {
 }
 
 .login .submit-btn {
-  background-color: #6B92A4;
+  background-color: #D991A4;
   color: rgba(255, 255, 255, 0.7);
   border: none;
   border-radius: 15px;
