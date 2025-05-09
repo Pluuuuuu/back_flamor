@@ -1,0 +1,83 @@
+[
+  {
+    "id": 7,
+    "name": "Handmade Bracelet",
+    "desc": "Stylish and handcrafted for elegance.",
+    "price": "$11.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Absolutely love the quality!"
+  },
+  {
+    "id": 3,
+    "name": "Classic Bracelet",
+    "desc": "Timeless piece to complement any outfit.",
+    "price": "$9.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Looks amazing and feels comfortable."
+  },
+  {
+    "id": 5,
+    "name": "Gold-Plated Bracelet",
+    "desc": "Luxurious feel with gold accents.",
+    "price": "$13.49",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "The gold plating is so shiny!"
+  },
+  {
+    "id": 1,
+    "name": "Beaded Bracelet",
+    "desc": "Colorful beads strung to perfection.",
+    "price": "$10.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Perfect match for summer outfits."
+  },
+  {
+    "id": 6,
+    "name": "Leather Wrap Bracelet",
+    "desc": "Chic leather design with magnetic clasp.",
+    "price": "$12.49",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Feels durable and looks great!"
+  },
+  {
+    "id": 8,
+    "name": "Pearl Charm Bracelet",
+    "desc": "Elegant pearls with a feminine touch.",
+    "price": "$14.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Very classy, got lots of compliments!"
+  },
+  {
+    "id": 4,
+    "name": "Minimalist Bracelet",
+    "desc": "Simple yet striking design.",
+    "price": "$10.49",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Exactly what I was looking for."
+  },
+  {
+    "id": 9,
+    "name": "Crystal Bracelet",
+    "desc": "Sparkling crystals that shine bright.",
+    "price": "$15.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Gorgeous sparkle under the light!"
+  },
+  {
+    "id": 2,
+    "name": "Friendship Bracelet",
+    "desc": "Share one with your bestie!",
+    "price": "$8.99",
+    "img": "../assets/praclet-black.png",
+    "inner": "../assets/praclet-black-inner.png",
+    "review": "Bought it for a friend and she loved it."
+  }
+]

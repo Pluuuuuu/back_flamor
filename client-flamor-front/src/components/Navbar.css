@@ -1,0 +1,48 @@
+.top-banner-nav {
+  background-color: #222;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1000;
+  background-color: #d991a4;
+}
+.link {
+  color: white;
+}
+.link:hover {
+  color: #881d88;
+}
+
+#logo {
+  height: 2.5rem;
+  padding-left: 3rem;
+}
+
+#top-banner-right {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: center;
+  padding-right: 1rem;
+}
+
+#icon-and-cart {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+#icon {
+  border-radius: 100%;
+}
+
+.top-banner-img {
+  height: 3rem;
+}

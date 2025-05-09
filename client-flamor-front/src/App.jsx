@@ -12,7 +12,8 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AuthForm from './pages/AuthForm';
-
+import Product from './pages/Product';
+import Footer from './components/Footer';
 function App() {
   return (
     <Router>
@@ -27,8 +28,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/AuthForm" element={<AuthForm />} />
-        
+        <Route path="/product" element={<Product />} />
       </Routes>
+      <Footer></Footer>
     </Router>
   );
 }

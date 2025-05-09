@@ -1,15 +1,19 @@
 import React from "react"
 import logo from "../assets/logo.png"
-import cart from "../assets/cart.png"
-import icon from "../assets/icon.jpg"
-import "./Navbar.css" // Optional: for styling
+import "./Footer.css" // Optional: for styling
 import { Link } from "react-router-dom"
+import {
+  FaFacebook,
+  FaLinkedin,
+  FaYoutube,
+  FaInstagram,
+} from "react-icons/fa"
 
-const Navbar = () => {
+const Footer = () => {
   return (
-    <nav className="top-banner-nav">
+    <nav className="footer-nav">
       <img id="logo" src={logo} alt="Logo" />
-      <div id="top-banner-right">
+      <div id="footer-middle">
         <Link
           style={{
             textDecoration: "none",
@@ -50,17 +54,15 @@ const Navbar = () => {
         >
           Contact Us
         </Link>
-        <div id="icon-and-cart">
-          <Link to="/cart">
-            <img className="top-banner-img" src={cart} alt="Cart" />
-          </Link>
-          <Link to="/authform">
-            <img className="top-banner-img" src={icon} alt="User Icon" />
-          </Link>
-        </div>
+      </div>
+      <div className="footer-right">
+        <FaFacebook />
+        <FaLinkedin />
+        <FaYoutube />
+        <FaInstagram />
       </div>
     </nav>
   )
 }
 
-export default Navbar
+export default Footer

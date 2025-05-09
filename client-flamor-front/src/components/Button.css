@@ -1,0 +1,13 @@
+#Btn {
+    padding: 0px 1rem;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    height: 3rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  #Btn:hover{
+    
+    background-color: #c16f89;
+  }
