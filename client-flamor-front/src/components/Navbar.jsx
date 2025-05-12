@@ -16,6 +16,7 @@ const Navbar = () => {
             cursor: "pointer",
           }}
           className="link"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           to="/"
         >
           Home
@@ -26,6 +27,7 @@ const Navbar = () => {
             cursor: "pointer",
           }}
           className="link"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           to="/shop"
         >
           Shop
@@ -36,6 +38,7 @@ const Navbar = () => {
             cursor: "pointer",
           }}
           className="link"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           to="/about"
         >
           About Us
@@ -46,16 +49,27 @@ const Navbar = () => {
             cursor: "pointer",
           }}
           className="link"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           to="/contact"
         >
           Contact Us
         </Link>
         <div id="icon-and-cart">
-          <Link to="/cart">
+          <Link
+            onClick={() =>
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }
+            to="/cart"
+          >
             <img className="top-banner-img" src={cart} alt="Cart" />
           </Link>
-          <Link to="/authform">
-            <img className="top-banner-img" src={icon} alt="User Icon" />
+          <Link
+            onClick={() =>
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }
+            to="/authform"
+          >
+            <img className="top-banner-img img-usr" src={icon} alt="User Icon" />
           </Link>
         </div>
       </div>

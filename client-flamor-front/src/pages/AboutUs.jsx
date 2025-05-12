@@ -17,12 +17,23 @@ const AboutUs = () => {
 
       <div className="ceo-about">
         <h2>About</h2>
-        <p className="subheading">Subheading for description or instructions</p>
-        <p className="body-text">
-          Body text for your whole article or post. We’ll put in some lorem ipsum to show how a filled-out page might look:
+        <p className="subheading">
+          Subheading for description or instructions
         </p>
-        <p>
-          Excepteur efficient emerging, minim veniam anim aute carefully curated Ginza conversation...
+        <p className="body-text">
+          Body text for your whole article or post. We’ll put in some
+          lorem ipsum to show how a filled-out page might look:
+        </p>
+        <p className="body-text">
+          Excepteur efficient emerging, minim veniam anim aute carefully
+          curated Ginza conversation exquisite perfect nostrud nisi
+          intricate Content. Qui international first-class nulla ut.
+          Punctual adipisicing, essential lovely queen tempor eiusmod
+          irure. Exclusive izakaya charming Scandinavian impeccable aute
+          quality of life soft power pariatur Melbourne occaecat
+          discerning. Qui wardrobe aliquip, et Porter destination Toto
+          remarkable officia Helsinki excepteur Basset hound. Zürich
+          sleepy perfect consectetur.
         </p>
       </div>
     </div>

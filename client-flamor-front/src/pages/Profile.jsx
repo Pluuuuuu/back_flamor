@@ -14,10 +14,11 @@ const Profile = () => {
   const navigate = useNavigate();
 
   // Axios instance configured for cookie usage
-  const axiosInstance = axios.create({
-    baseURL: "https://water-back-esh3.onrender.com/api",
-    withCredentials: true,
-  });
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000/api/login",
+  withCredentials: true,
+});
+
 
   useEffect(() => {
     axiosInstance

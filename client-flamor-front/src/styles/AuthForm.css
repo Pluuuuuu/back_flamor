@@ -1,35 +1,35 @@
-/* @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
-
-html, body {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Fira Sans", sans-serif;
-  background-color: #E1E8EE;
-} */
+:root {
+  font-size: 16px; /* base size for rem units */
+}
 
 .form-structor {
   background-color: #222;
-  border-radius: 15px;
-  width: 350px;
-  height: 550px;
+  border-radius: 0.9375rem;
+  width: 31.25rem;
+  height: 34.375rem;
   overflow: hidden;
   position: relative;
 }
 
-.form-structor::after {
-  content: "";
-  opacity: 0.8;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f2d5db;
+  padding: 1.25rem;
+  gap: 20rem;
+  margin: -2rem 0;
+}
+
+.side-image {
+  width: 25rem;
+  height: 34.375rem;
   background-image: url("https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bf884ad570b50659c5fa2dc2cfb20ecf&auto=format&fit=crop&w=1000&q=100");
   background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: 500px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0.9375rem;
 }
 
 /* Signup styles */
@@ -55,7 +55,7 @@ html, body {
 }
 
 .signup.slide-up .form-title {
-  font-size: 1em;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -67,7 +67,7 @@ html, body {
 .signup .form-title {
   color: #fff;
   text-align: center;
-  font-size: 1.7em;
+  font-size: 1.7rem;
 }
 
 .signup .form-title span {
@@ -77,9 +77,9 @@ html, body {
 }
 
 .signup .form-holder {
-  margin-top: 50px;
+  margin-top: 3.125rem;
   background: #fff;
-  border-radius: 15px;
+  border-radius: 0.9375rem;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -87,21 +87,22 @@ html, body {
 .signup .form-holder .input {
   width: 100%;
   border: none;
-  padding: 8px 15px;
-  font-size: 12px;
+  padding: 0.5rem 0.9375rem;
+  font-size: 1rem;
   border-bottom: 1px solid #eee;
 }
 
 .signup .submit-btn {
-  background-color: #D991A4;
+  background-color: #d991a4;
   color: rgba(255, 255, 255, 0.7);
   border: none;
-  border-radius: 15px;
-  padding: 15px 45px;
+  border-radius: 0.9375rem;
+  padding: 0.9375rem 2.8125rem;
   width: 100%;
   font-weight: bold;
   cursor: pointer;
-  margin: 15px auto;
+  margin: 0.9375rem auto;
+  font-size: 1rem;
 }
 
 .signup .submit-btn:hover {
@@ -124,11 +125,11 @@ html, body {
   content: "";
   position: absolute;
   left: 50%;
-  top: -20px;
+  top: -1.25rem;
   transform: translateX(-50%);
   background-color: #fff;
   width: 200%;
-  height: 250px;
+  height: 15.625rem;
   border-radius: 50%;
   z-index: 4;
 }
@@ -146,7 +147,7 @@ html, body {
 .login .form-title {
   color: #000;
   text-align: center;
-  font-size: 1.7em;
+  font-size: 1.7rem;
 }
 
 .login .form-title span {
@@ -156,9 +157,9 @@ html, body {
 }
 
 .login .form-holder {
-  margin-top: 50px;
+  margin-top: 3.125rem;
   background: #fff;
-  border-radius: 15px;
+  border-radius: 0.9375rem;
   border: 1px solid #eee;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -167,21 +168,22 @@ html, body {
 .login .form-holder .input {
   width: 100%;
   border: none;
-  padding: 8px 15px;
-  font-size: 12px;
+  padding: 0.5rem 0.9375rem;
+  font-size: 1rem;
   border-bottom: 1px solid #eee;
 }
 
 .login .submit-btn {
-  background-color: #D991A4;
+  background-color: #d991a4;
   color: rgba(255, 255, 255, 0.7);
   border: none;
-  border-radius: 15px;
-  padding: 15px 45px;
+  border-radius: 0.9375rem;
+  padding: 0.9375rem 2.8125rem;
   width: 100%;
   font-weight: bold;
   cursor: pointer;
-  margin: 15px auto;
+  margin: 0.9375rem auto;
+  font-size: 1rem;
 }
 
 .login .submit-btn:hover {
@@ -204,7 +206,7 @@ html, body {
 }
 
 .login.slide-up .form-title {
-  font-size: 1em;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -212,6 +214,7 @@ html, body {
   opacity: 1;
   visibility: visible;
 }
+
 .password-container {
   position: relative;
 }
@@ -219,7 +222,7 @@ html, body {
 .eye-icon {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 0.625rem;
   transform: translateY(-50%);
   cursor: pointer;
   color: #aaa;

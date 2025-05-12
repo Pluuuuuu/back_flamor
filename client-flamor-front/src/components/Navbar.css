@@ -16,7 +16,7 @@
   color: white;
 }
 .link:hover {
-  color: #881d88;
+  color: #594548;
 }
 
 #logo {
@@ -45,4 +45,7 @@
 
 .top-banner-img {
   height: 3rem;
+}
+.img-usr{
+  border-radius: 50%;
 }

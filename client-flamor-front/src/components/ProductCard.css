@@ -49,4 +49,43 @@
   .product-card:hover .add-to-cart {
     opacity: 1;
   }
-  
+  .product-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.add-to-cart,
+.add-to-fav,
+.login-button {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.add-to-cart:disabled,
+.add-to-fav:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.login-disclaimer {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #777;
+}

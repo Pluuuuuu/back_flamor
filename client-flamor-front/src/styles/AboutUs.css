@@ -8,9 +8,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 5rem;
     flex-wrap: wrap;
     margin-bottom: 3rem;
+    padding-left: 20vw;
   }
   
   .ceo-text {
@@ -18,7 +19,7 @@
   }
   
   .ceo-title {
-    font-size: 4rem;
+    font-size: 8rem;
     font-weight: bold;
     color: #f4cdd9;
     margin: 0;
@@ -26,7 +27,7 @@
   }
   
   .ceo-subtitle {
-    font-size: 1.8rem;
+    font-size: 4rem;
     color: #3d3d3d;
     margin-top: -1.1rem;
   }
@@ -35,39 +36,39 @@
     background-color: #f4cdd9;
     padding: 1rem;
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 50vh;
+    height: 50vh;
   }
   
   .ceo-image {
-    width: 200px;
+    width: 50vh;
     max-width: 100%;
     height: auto;
     display: block;
     position: absolute;
-    top:0;
-    left:-65px;
+    top:-5vh;
+    left:-16vh;
   }
   
   .ceo-about {
-    max-width: 800px;
+    max-width: 80vw;
     margin: 0 auto;
   }
   
   .ceo-about h2 {
-    font-size: 2rem;
+    font-size: 4rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
   }
   
   .subheading {
     color: gray;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
   
   .body-text {
-    font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
     line-height: 1.6;
   }
   
