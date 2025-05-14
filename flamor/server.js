@@ -19,7 +19,7 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 dotenv.config();
 const app = express();
-
+''
 // Middleware
 app.use(
   cors({
@@ -27,6 +27,7 @@ app.use(
     credentials: true,
   })
 );
+//required to read cookies
 app.use(cookieParser());
 // Middleware to parse JSON bodies
 app.use(express.json());

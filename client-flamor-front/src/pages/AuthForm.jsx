@@ -797,3 +797,246 @@ export default AuthForm
 // };
 
 // export default AuthForm;
+
+
+// import { useRef, useState } from "react"
+// import axios from "axios"
+// import { useNavigate } from "react-router-dom"
+// import "../styles/AuthForm.css"
+// import { FaEye, FaEyeSlash } from "react-icons/fa" // Importing eye icons
+
+// const AuthForm = () => {
+//   const loginRef = useRef(null)
+//   const signupRef = useRef(null)
+//   const navigate = useNavigate()
+//   const [screen, setscreen] = useState("signup")
+
+//   const [signupData, setSignupData] = useState({
+//     name: "",
+//     email: "",
+//     password: "",
+//   })
+
+//   const [loginData, setLoginData] = useState({
+//     email: "",
+//     password: "",
+//   })
+
+//   const [error, setError] = useState("")
+//   const [success, setSuccess] = useState("")
+//   const [showPasswordSignup, setShowPasswordSignup] = useState(false) // Password visibility toggle for signup
+//   const [showPasswordLogin, setShowPasswordLogin] = useState(false) // Password visibility toggle for login
+
+//   const handleLoginClick = () => {
+//     if (screen == "signup") {
+//       setscreen("login")
+//       const parent = loginRef.current.closest(".login")
+
+//       if (!parent.classList.contains("slide-up")) {
+//         parent.classList.add("slide-up")
+//       } else {
+//         signupRef.current.classList.add("slide-up")
+//         parent.classList.remove("slide-up")
+//       }
+//     }
+//   }
+
+//   const handleSignupClick = () => {
+//     if (screen == "login") {
+//       setscreen("signup")
+//       const parent = signupRef.current
+
+//       if (!parent.classList.contains("slide-up")) {
+//         parent.classList.add("slide-up")
+//       } else {
+//         loginRef.current.closest(".login").classList.add("slide-up")
+//         parent.classList.remove("slide-up")
+//       }
+//     }
+//   }
+
+//   const axiosInstance = axios.create({
+//     baseURL: "http://localhost:5000/api",
+//     withCredentials: true,
+//   })
+
+//   const handleSignup = async () => {
+//     try {
+//       setError("")
+//       setSuccess("")
+
+//       const { email, password } = signupData
+
+//       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+//       if (!emailRegex.test(email)) {
+//         setError("Invalid email format.")
+//         return
+//       }
+
+//       const passwordRegex =
+//         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+//       if (!passwordRegex.test(password)) {
+//         setError(
+//           "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol."
+//         )
+//         return
+//       }
+
+//       const response = await axiosInstance.post("/auth/signup", {
+//         ...signupData,
+//         role: "customer",
+//       })
+
+//       setSuccess(response.data.message)
+//       handleLoginClick()
+//     } catch (err) {
+      
+//       console.log(err)
+//       setError(err.response?.data?.message || "Signup failed")
+//     }
+//   }
+
+//   const handleLogin = async () => {
+//     try {
+//       setError("")
+//       setSuccess("")
+
+//       const { email } = loginData
+//       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+//       if (!emailRegex.test(email)) {
+//         setError("Invalid email format.")
+//         return
+//       }
+
+//       const response = await axiosInstance.post("/auth/login", loginData)
+
+//       setSuccess(response.data.message)
+//       navigate("/profile")
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Login failed")
+//     }
+//   }
+
+//   return (
+//     <div className="form-wrapper">
+//       <div className="form-structor">
+//         {error && (
+//           <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+//         )}
+//         {success && (
+//           <p style={{ color: "green", textAlign: "center" }}>{success}</p>
+//         )}
+
+//         <div className="signup" ref={signupRef}>
+//           <h2
+//             className="form-title"
+//             id="signup"
+//             onClick={handleSignupClick}
+//           >
+//             <span>or</span>Sign up
+//           </h2>
+
+//           <div className="form-holder">
+//             <input
+//               type="text"
+//               className="input"
+//               placeholder="Name"
+//               value={signupData.name}
+//               onChange={(e) =>
+//                 setSignupData({ ...signupData, name: e.target.value })
+//               }
+//             />
+//             <input
+//               type="email"
+//               className="input"
+//               placeholder="Email"
+//               value={signupData.email}
+//               onChange={(e) =>
+//                 setSignupData({ ...signupData, email: e.target.value })
+//               }
+//             />
+//             <div className="password-container">
+//               <input
+//                 type={showPasswordSignup ? "text" : "password"}
+//                 className="input"
+//                 placeholder="Password"
+//                 value={signupData.password}
+//                 onChange={(e) =>
+//                   setSignupData({
+//                     ...signupData,
+//                     password: e.target.value,
+//                   })
+//                 }
+//               />
+//               <span
+//                 className="eye-icon"
+//                 onClick={() => setShowPasswordSignup(!showPasswordSignup)}
+//               >
+//                 {showPasswordSignup ? <FaEyeSlash /> : <FaEye />}
+//               </span>
+//             </div>
+//           </div>
+
+//           <button className="submit-btn" onClick={handleSignup}>
+//             Sign up
+//           </button>
+//         </div>
+
+//         <div className="login slide-up">
+//           <div className="center" ref={loginRef}>
+//             <h2
+//               className="form-title"
+//               id="login"
+//               onClick={handleLoginClick}
+//             >
+//               <span>or</span>Log in
+//             </h2>
+
+//             <div className="form-holder">
+//               <input
+//                 type="email"
+//                 className="input"
+//                 placeholder="Email"
+//                 value={loginData.email}
+//                 onChange={(e) =>
+//                   setLoginData({ ...loginData, email: e.target.value })
+//                 }
+//               />
+//               <div className="password-container">
+//                 <input
+//                   type={showPasswordLogin ? "text" : "password"}
+//                   className="input"
+//                   placeholder="Password"
+//                   value={loginData.password}
+//                   onChange={(e) =>
+//                     setLoginData({
+//                       ...loginData,
+//                       password: e.target.value,
+//                     })
+//                   }
+//                 />
+//                 <span
+//                   className="eye-icon"
+//                   onClick={() => setShowPasswordLogin(!showPasswordLogin)}
+//                 >
+//                   {showPasswordLogin ? <FaEyeSlash /> : <FaEye />}
+//                 </span>
+//               </div>
+//             </div>
+
+//             <button className="submit-btn" onClick={handleLogin}>
+//               Log in
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="side-image" />
+//     </div>
+//   )
+// }
+
+// export default AuthForm
+
+//email validation
+//enforce a strong password policy

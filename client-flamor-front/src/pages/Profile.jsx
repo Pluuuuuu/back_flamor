@@ -13,23 +13,22 @@ const Profile = () => {
 
   const navigate = useNavigate();
 
-  // Axios instance configured for cookie usage
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api/login",
-  withCredentials: true,
-});
-
+  // ✅ Fixed: baseURL should NOT include /login
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:5000/api",
+    withCredentials: true,
+  });
 
   useEffect(() => {
     axiosInstance
-      .get("/users/profile")
+      .get("/users/me")
       .then((res) => {
         setUser(res.data);
         setFormData({ name: res.data.name, email: res.data.email });
       })
       .catch((err) => {
         console.error("Error fetching user data:", err);
-        navigate("/login");
+        navigate("/AuthForm");
       });
   }, [navigate]);
 
@@ -67,7 +66,7 @@ const axiosInstance = axios.create({
     try {
       await axiosInstance.post("/auth/logout");
       localStorage.removeItem("profilePic");
-      navigate("/login");
+      navigate("/AuthForm");
     } catch (err) {
       console.error("Logout failed:", err);
     }
