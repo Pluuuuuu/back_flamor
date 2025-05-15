@@ -3,103 +3,98 @@ import axios from 'axios';
 import '../styles/cart.css';
 
 const CartPage = () => {
-  // State to hold cart items
   const [cartItems, setCartItems] = useState([]);
-
-  // State to manage popup notifications
+  const [total, setTotal] = useState(0);
   const [popup, setPopup] = useState({ message: '', visible: false });
 
-  // Fetch the cart items from the server when the component loads
   useEffect(() => {
     fetchCart();
   }, []);
 
-  // Function to get cart items from the API
   const fetchCart = () => {
-    axios.get('http://localhost:5000/api/cart', { withCredentials: true })
-      .then(res => setCartItems(res.data)) // Set cart items from server response
+    axios
+      .get('http://localhost:5000/api/cart', { withCredentials: true })
+      .then(res => {
+        console.log("🧾 Cart API response:", res.data);
+        setCartItems(res.data.items);
+        setTotal(res.data.total);
+      })
       .catch(err => console.error('Failed to fetch cart:', err));
   };
 
-  // Function to update the quantity of a cart item
   const updateQuantity = (itemId, quantity) => {
-    if (quantity < 1) return; // Prevent setting quantity below 1
+    if (quantity < 1) return;
 
-    axios.put(`http://localhost:5000/api/cart/${itemId}`, { quantity }, { withCredentials: true })
-      .then(fetchCart) // Re-fetch cart after successful update
+    axios
+      .put(`http://localhost:5000/api/cart/${itemId}`, { quantity }, { withCredentials: true })
+      .then(fetchCart)
       .catch(err => {
         console.error('Failed to update quantity:', err);
         showPopup('Failed to update quantity.');
       });
   };
 
-  // Function to remove an item from the cart
   const removeItem = (itemId) => {
-    axios.delete(`http://localhost:5000/api/cart/${itemId}`, { withCredentials: true })
-      .then(fetchCart) // Re-fetch cart after item is removed
+    axios
+      .delete(`http://localhost:5000/api/cart/${itemId}`, { withCredentials: true })
+      .then(fetchCart)
       .catch(err => {
         console.error('Failed to remove item:', err);
         showPopup('Failed to remove item.');
       });
   };
 
-  // Display a temporary popup message
   const showPopup = (message) => {
     setPopup({ message, visible: true });
-    setTimeout(() => setPopup({ message: '', visible: false }), 3000); // Hide popup after 3 seconds
+    setTimeout(() => setPopup({ message: '', visible: false }), 3000);
   };
 
-  // Calculate total price of all items in the cart
-  const total = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  console.log("🛒 Cart Items:", cartItems);
 
   return (
     <div className="cart-page">
       <h1 className="cart-title">Your Shopping Cart</h1>
 
-      {/* If cart is empty, show message */}
       {cartItems.length === 0 ? (
         <p className="empty-cart">Your cart is empty.</p>
       ) : (
         <div>
-          {/* List of cart items */}
           <div className="cart-items">
             {cartItems.map(item => (
               <div key={item.id} className="cart-item">
                 <img
-                  src={item.product.image_url}
-                  alt={item.product.name}
+                  src={item.Product?.Image?.image_url || 'https://placehold.co/100x100?text=No+Image'}
+                  alt={item.Product?.Image?.alt_text || item.Product?.name || 'Product'}
                   className="cart-item-image"
-                  onError={(e) => e.target.src = 'https://placehold.co/100x100?text=No+Image'} // Placeholder if image fails to load
+                  onError={(e) => e.target.src = 'https://placehold.co/100x100?text=No+Image'}
                 />
                 <div className="cart-item-info">
-                  <h3>{item.product.name}</h3>
-                  <p>${item.product.price} each</p>
+                  <h3>{item.Product?.name || "Unnamed Product"}</h3>
+                  <p>${Number(item.Product?.price).toFixed(2)} each</p>
 
-                  {/* Quantity controls */}
                   <div className="quantity-control">
                     <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
                     <span>{item.quantity}</span>
                     <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
                   </div>
 
-                  {/* Subtotal for current item */}
-                  <p className="item-subtotal">Subtotal: ${item.product.price * item.quantity}</p>
+                  <p className="item-subtotal">
+                    Subtotal: ${(Number(item.Product?.price) * item.quantity).toFixed(2)}
+                  </p>
 
-                  {/* Remove item button */}
                   <button className="remove-btn" onClick={() => removeItem(item.id)}>Remove</button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Cart total and action buttons */}
           <div className="cart-summary">
             <h2>Total: ${total.toFixed(2)}</h2>
 
             <div className="cart-buttons">
               <button
                 className="continue-btn"
-                onClick={() => window.location.href = "/shop"} // Navigate to shop
+                onClick={() => window.location.href = "/shop"}
               >
                 Continue Shopping
               </button>
@@ -112,7 +107,6 @@ const CartPage = () => {
         </div>
       )}
 
-      {/* Popup notification for feedback */}
       {popup.visible && (
         <div className="popup-notification">{popup.message}</div>
       )}
