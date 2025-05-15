@@ -40,7 +40,7 @@ const Profile = () => {
     if (!formData[field].trim()) return;
 
     try {
-      const response = await axiosInstance.put("/users/update", {
+      const response = await axiosInstance.put("/users/me", {
         [field]: formData[field],
       });
       setUser(response.data);

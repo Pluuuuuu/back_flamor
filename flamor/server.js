@@ -31,6 +31,7 @@ app.use(
 app.use(cookieParser());
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Error handling middleware for JSON parsing errors
 app.use((err, req, res, next) => {

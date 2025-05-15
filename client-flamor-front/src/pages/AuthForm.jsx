@@ -1,33 +1,65 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import "../styles/AuthForm.css"
-import { FaEye, FaEyeSlash } from "react-icons/fa" // Importing eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa"
 
+// Custom Axios instance with base URL and credentials for cookie-based auth
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000/api",
+  withCredentials: true, // Send cookies with requests
+})
+
+
+// AuthForm component handles both signup and login logic with animations and validation
 const AuthForm = () => {
+  // Refs to control UI animation for login/signup toggle
   const loginRef = useRef(null)
   const signupRef = useRef(null)
-  const navigate = useNavigate()
+
+  const navigate = useNavigate()  // For redirection
+
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await axiosInstance.get("auth/profile"); // uses cookie
+      if (res.data?.user) {
+        navigate("/profile"); // user is logged in
+      }
+    } catch (err) {
+      // Not logged in — do nothing
+    }
+  };
+
+  checkAuth();
+}, [navigate]);
+
+  // Tracks current visible form ('login' or 'signup')
   const [screen, setscreen] = useState("signup")
 
+  // State for storing signup form input values
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
     password: "",
   })
 
+  // State for storing login form input values
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   })
 
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [showPasswordSignup, setShowPasswordSignup] = useState(false) // Password visibility toggle for signup
-  const [showPasswordLogin, setShowPasswordLogin] = useState(false) // Password visibility toggle for login
+  const [rememberMe, setRememberMe] = useState(false) // Tracks "Remember Me" checkbox
+  const [error, setError] = useState("")              // Error message to display
+  const [success, setSuccess] = useState("")          // Success message to display
+  const [loading, setLoading] = useState(false)       // Whether request is loading
+  const [showPasswordSignup, setShowPasswordSignup] = useState(false) // Toggles signup password visibility
+  const [showPasswordLogin, setShowPasswordLogin] = useState(false)   // Toggles login password visibility
 
+  // Handles UI animation to slide to the login form
   const handleLoginClick = () => {
-    if (screen == "signup") {
+    if (screen === "signup") {
       setscreen("login")
       const parent = loginRef.current.closest(".login")
 
@@ -40,8 +72,9 @@ const AuthForm = () => {
     }
   }
 
+  // Handles UI animation to slide to the signup form
   const handleSignupClick = () => {
-    if (screen == "login") {
+    if (screen === "login") {
       setscreen("signup")
       const parent = signupRef.current
 
@@ -54,88 +87,106 @@ const AuthForm = () => {
     }
   }
 
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000/api",
-    withCredentials: true,
-  })
+  // // Custom Axios instance with base URL and credentials for cookie-based auth
+  // const axiosInstance = axios.create({
+  //   baseURL: "http://localhost:5000/api",
+  //   withCredentials: true, // Send cookies with requests
+  // })
 
+  // Handles the signup form submission
   const handleSignup = async () => {
     try {
       setError("")
       setSuccess("")
+      setLoading(true)
 
       const { email, password } = signupData
 
+      // Email and password validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
       if (!emailRegex.test(email)) {
         setError("Invalid email format.")
         return
       }
 
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
       if (!passwordRegex.test(password)) {
         setError(
-          "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol."
+          "Password must be 8+ characters with uppercase, lowercase, number, and symbol."
         )
         return
       }
 
-      const response = await axiosInstance.post("/auth/signup", {
+      // Send signup request
+      const res = await axiosInstance.post("/auth/signup", {
         ...signupData,
-        role: "customer",
+        role: "customer", // default role
       })
 
-      setSuccess(response.data.message)
+      // Display success and reset form
+      setSuccess(res.data.message)
+      setSignupData({ name: "", email: "", password: "" })
+
+      // Automatically switch to login screen after signup
       handleLoginClick()
     } catch (err) {
-      
-      console.log(err)
+      // Show error message from server
       setError(err.response?.data?.message || "Signup failed")
+    } finally {
+      setLoading(false)
     }
   }
 
+  // Handles the login form submission
   const handleLogin = async () => {
     try {
       setError("")
       setSuccess("")
+      setLoading(true)
 
       const { email } = loginData
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
       if (!emailRegex.test(email)) {
         setError("Invalid email format.")
         return
       }
 
-      const response = await axiosInstance.post("/auth/login", loginData)
+      // Send login request
+      const res = await axiosInstance.post("/auth/login", loginData)
 
-      setSuccess(response.data.message)
+      // If "Remember Me" is checked, store token in localStorage (optional)
+      if (rememberMe) {
+        localStorage.setItem("token", res.data.token)
+      }
+
+      setSuccess(res.data.message)
+
+      // Navigate to profile page on successful login
       navigate("/profile")
     } catch (err) {
       setError(err.response?.data?.message || "Login failed")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div className="form-wrapper">
       <div className="form-structor">
-        {error && (
-          <p style={{ color: "red", textAlign: "center" }}>{error}</p>
-        )}
-        {success && (
-          <p style={{ color: "green", textAlign: "center" }}>{success}</p>
-        )}
+        {/* Toast messages for error/success */}
+        {error && <div className="toast error">{error}</div>}
+        {success && <div className="toast success">{success}</div>}
 
+        {/* Sign up section */}
         <div className="signup" ref={signupRef}>
-          <h2
-            className="form-title"
-            id="signup"
-            onClick={handleSignupClick}
-          >
+          <h2 className="form-title" id="signup" onClick={handleSignupClick}>
             <span>or</span>Sign up
           </h2>
 
           <div className="form-holder">
+            {/* Name input */}
             <input
               type="text"
               className="input"
@@ -145,6 +196,8 @@ const AuthForm = () => {
                 setSignupData({ ...signupData, name: e.target.value })
               }
             />
+
+            {/* Email input */}
             <input
               type="email"
               className="input"
@@ -154,6 +207,8 @@ const AuthForm = () => {
                 setSignupData({ ...signupData, email: e.target.value })
               }
             />
+
+            {/* Password input with toggle visibility */}
             <div className="password-container">
               <input
                 type={showPasswordSignup ? "text" : "password"}
@@ -176,22 +231,21 @@ const AuthForm = () => {
             </div>
           </div>
 
-          <button className="submit-btn" onClick={handleSignup}>
-            Sign up
+          {/* Sign up button */}
+          <button className="submit-btn" onClick={handleSignup} disabled={loading}>
+            {loading ? "Signing up..." : "Sign up"}
           </button>
         </div>
 
+        {/* Login section */}
         <div className="login slide-up">
           <div className="center" ref={loginRef}>
-            <h2
-              className="form-title"
-              id="login"
-              onClick={handleLoginClick}
-            >
+            <h2 className="form-title" id="login" onClick={handleLoginClick}>
               <span>or</span>Log in
             </h2>
 
             <div className="form-holder">
+              {/* Email input */}
               <input
                 type="email"
                 className="input"
@@ -201,6 +255,8 @@ const AuthForm = () => {
                   setLoginData({ ...loginData, email: e.target.value })
                 }
               />
+
+              {/* Password input with toggle visibility */}
               <div className="password-container">
                 <input
                   type={showPasswordLogin ? "text" : "password"}
@@ -221,21 +277,32 @@ const AuthForm = () => {
                   {showPasswordLogin ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
+
+              {/* Remember me checkbox */}
+              <label className="remember-me">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                Remember me
+              </label>
             </div>
 
-            <button className="submit-btn" onClick={handleLogin}>
-              Log in
+            {/* Login button */}
+            <button className="submit-btn" onClick={handleLogin} disabled={loading}>
+              {loading ? "Logging in..." : "Log in"}
             </button>
           </div>
         </div>
       </div>
-
-      <div className="side-image" />
     </div>
   )
 }
 
 export default AuthForm
+
+
 
 //email validation
 //enforce a strong password policy
