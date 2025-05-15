@@ -7,7 +7,7 @@ export const getUserProfile = async (req, res) => {
     console.log("🔍 Getting profile for user ID:", req.user?.id);
 
     const user = await User.findByPk(req.user.id, {
-      attributes: ["id", "name", "email"],
+      attributes: ["id", "name", "email", "role"], // 👈 ADD role here
       include: [
         {
           model: Image,
@@ -28,6 +28,7 @@ export const getUserProfile = async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      role: user.role, //Include role in response for cart
       profileImage: user.profileImage ? user.profileImage.image_url : null,
     });
   } catch (error) {
@@ -35,6 +36,7 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 // Get All Users - Admin
 export const getAllUsers = async (req, res) => {

@@ -8,7 +8,7 @@ const Shop = () => {
   const [popup, setPopup] = useState({ message: '', visible: false });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/me', { withCredentials: true })
+    axios.get('http://localhost:5000/api/users/me', { withCredentials: true })
       .then(res => {
         setUserRole(res.data.role);
       })
@@ -42,7 +42,7 @@ const Shop = () => {
       return;
     }
 
-    axios.post('http://localhost:5000/api/cart', {
+    axios.post('http://localhost:5000/api/cart/add', {
       product_id: productId,
       quantity: 1,
     }, { withCredentials: true })

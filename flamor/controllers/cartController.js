@@ -1,4 +1,5 @@
-import { Cart, Product } from "../config/db.js"; // Import models from Sequelize setup
+import { Cart, Product, Image } from "../config/db.js"; // Import models from Sequelize setup
+
 
 // ✅ Add product to cart
 export const addToCart = async (req, res) => {
@@ -35,24 +36,40 @@ export const addToCart = async (req, res) => {
 // ✅ Get all items in the user's cart
 export const getCart = async (req, res) => {
   try {
-    const user_id = req.user.id; // Get the logged-in user's ID
+    const user_id = req.user.id;
+    console.log("🔍 Logged-in user ID:", user_id);
 
-    // 📦 Find all cart items for the user, include product info (name, price, images)
     const cart = await Cart.findAll({
       where: { user_id },
       include: [
         {
           model: Product,
-          attributes: ["id", "name", "price", "images"], // Limit to key product info
+          attributes: ["id", "name", "price"],
+          include: [
+            {
+              model: Image, // Make sure Image is properly associated with Product
+              where: { related_type: "product" }, // Optional filter
+              required: false, // Allow products without images
+              attributes: ["image_url", "alt_text"],
+            },
+          ],
         },
       ],
     });
 
-    // ✅ Send full cart with product details
-    res.status(200).json(cart);
+    console.log("🛒 Retrieved cart items:", JSON.stringify(cart, null, 2));
+
+    const total = cart.reduce(
+      (sum, item) => sum + (item.Product?.price || 0) * item.quantity,
+      0
+    );
+
+    res.status(200).json({ items: cart, total });
   } catch (err) {
-    // ❌ Handle server errors
-    res.status(500).json({ message: "Error fetching cart", error: err.message });
+    console.error("❌ Error in getCart:", err);
+    res
+      .status(500)
+      .json({ message: "Error fetching cart", error: err.message });
   }
 };
 
