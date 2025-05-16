@@ -14,6 +14,7 @@ import Signup from './pages/Signup';
 import AuthForm from './pages/AuthForm';
 import Product from './pages/Product';
 import Footer from './components/Footer';
+import CheckoutPage from './pages/CheckoutPage';
 function App() {
   return (
     <Router>
@@ -29,6 +30,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/AuthForm" element={<AuthForm />} />
         <Route path="/product" element={<Product />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
       <Footer></Footer>
     </Router>

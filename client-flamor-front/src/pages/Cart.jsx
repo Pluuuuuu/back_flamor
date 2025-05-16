@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ Import for navigation
 import axios from 'axios';
 import '../styles/cart.css';
 
@@ -6,6 +7,8 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [popup, setPopup] = useState({ message: '', visible: false });
+
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   useEffect(() => {
     fetchCart();
@@ -99,7 +102,10 @@ const CartPage = () => {
                 Continue Shopping
               </button>
 
-              <button className="checkout-btn">
+              <button
+                className="checkout-btn"
+                onClick={() => navigate("/checkout")} // ✅ Navigate to checkout
+              >
                 Proceed to Checkout
               </button>
             </div>

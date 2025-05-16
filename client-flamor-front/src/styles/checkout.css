@@ -1,0 +1,31 @@
+.checkout-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.shipping-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.payment-options label {
+  display: block;
+  margin: 1rem 0;
+}
+
+.place-order-btn {
+  padding: 0.8rem 1.2rem;
+  background-color: teal;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.order-message {
+  margin-top: 1rem;
+  color: green;
+  font-weight: bold;
+}
