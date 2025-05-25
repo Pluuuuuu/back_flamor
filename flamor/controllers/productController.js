@@ -1,208 +1,158 @@
-import
-  {
-  User,
+import {
   Product,
+  ProductVariant,
+  ProductColor,
   Image,
   Review,
+  Order,
   Category,
-  ProductColor,
-  ProductVariant,
 } from "../config/db.js";
-import { Op, fn, col } from "sequelize";
-import { uploadToImgBB } from "../utils/uploadToImgBB.js";  // Added import
-import sequelize from "sequelize";
+import sequelize from "../config/sequelize.js";
+import { Op } from "sequelize";
 
-// Admin: Add Product
+// Create a product
+// Create a product
 export const createProduct = async (req, res) => {
+  const data = req.body || {};
+  const { name, description, price, category_id, category_name, variants } = data;
+
   try {
-    if (!req.body) {
-      return res.status(400).json({ message: "Request body is missing" });
-    }
+    // Determine finalCategoryId from category_id or category_name
+    let finalCategoryId = category_id;
 
-    const { name, description, price, stock, category_name, variants } =
-      req.body;
-
-    // Validate and convert stock to integer
-    const stockInt = parseInt(stock, 10);
-    if (isNaN(stockInt)) {
-      return res.status(400).json({ message: "Invalid stock value" });
-    }
-
-    // Validate and convert price to float
-    const priceFloat = parseFloat(price);
-    if (isNaN(priceFloat)) {
-      return res.status(400).json({ message: "Invalid price value" });
-    }
-
-    const imageUrls = [];
-
-    for (const file of req.files) {
-      const imageUrl = await uploadToImgBB(file.path);
-      imageUrls.push(imageUrl);
-    }
-
-    const category = await Category.findOne({
-      where: { name: category_name },
-    });
-
-    if (!category) {
-      return res.status(400).json({ message: "Category not found" });
-    }
-
-    const newProduct = await Product.create({
-      name,
-      description,
-      price: priceFloat,
-      stock: stockInt,
-      category_id: category.id,
-    });
-
-    // Save main product images
-    await Promise.all(
-      imageUrls.map((url) =>
-        Image.create({
-          related_type: "product",
-          related_id: newProduct.id,
-          image_url: url,
-          alt_text: "",
-        })
-      )
-    );
-
-    // Handle variants
-    if (variants?.length > 0) {
-      for (const variant of variants) {
-        let productColor = await ProductColor.findOne({
-          where: { color_name: variant.color_name },
-        });
-
-        if (!productColor) {
-          productColor = await ProductColor.create({
-            color_name: variant.color_name,
-            color_code: variant.color_code || "#FFFFFF",
-            product_id: newProduct.id,
-          });
-        }
-
-        const productVariant = await ProductVariant.create({
-          variant_name: variant.variant_name,
-          stock: variant.stock,
-          additional_price: variant.additional_price || 0,
-          product_id: newProduct.id,
-          product_color_id: productColor.id,
-        });
-
-        // Save images for productColor if provided
-        if (variant.images?.length > 0) {
-          await Promise.all(
-            variant.images.map((img) =>
-              Image.create({
-                image_url: img.image_url,
-                alt_text: img.alt_text || "",
-                related_type: "productColor",
-                related_id: productColor.id,
-              })
-            )
-          );
-        }
-      }
-    }
-
-    res.status(201).json({
-      message: "Product created",
-      product: newProduct,
-      images: imageUrls,
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to create product", error: err.message });
-  }
-};
-
-
-// Admin: Update Product (category by name)
-export const updateProduct = async (req, res) => {
-  try {
-    const { category_name, ...otherFields } = req.body;
-
-    let category_id;
-    if (category_name) {
+    if (!finalCategoryId && category_name) {
       const category = await Category.findOne({ where: { name: category_name } });
       if (!category) {
-        return res.status(404).json({ message: "Category not found" });
+        return res.status(400).json({ message: "Category not found" });
       }
-      category_id = category.id;
+      finalCategoryId = category.id;
     }
 
-    const updateData = {
-      ...otherFields,
-      ...(category_id && { category_id }),
-    };
-
-    const [updated] = await Product.update(updateData, { where: { id: req.params.id } });
-
-    if (updated === 0) {
-      return res.status(404).json({ message: "Product not found or no changes made" });
+    if (!finalCategoryId) {
+      return res.status(400).json({ message: "You must provide either category_id or category_name." });
     }
 
-    res.json({ message: "Product updated successfully" });
+    // Create product with category_id
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      category_id: finalCategoryId,
+    });
+
+    if (Array.isArray(variants)) {
+      for (const variant of variants) {
+        const { color_name, color_code, images, sizes } = variant;
+
+        const colorRecord = await ProductColor.create({
+          product_id: product.id,
+          color_name,
+          color_code,
+        });
+
+        if (Array.isArray(images)) {
+          for (const img of images) {
+            await Image.create({
+              related_id: colorRecord.id,
+              related_type: "productColor",
+              image_url: img.image_url,
+              alt_text: img.alt_text,
+            });
+          }
+        }
+
+        if (Array.isArray(sizes)) {
+          for (const size of sizes) {
+            await ProductVariant.create({
+              product_id: product.id,
+              color_id: colorRecord.id,  // Use color_id here
+              variant_name: size.variant_name,
+              variant_value: size.variant_value,
+              stock: parseInt(size.stock, 10),
+              additional_price: parseFloat(size.additional_price),
+            });
+          }
+        }
+      }
+    }
+
+    res.status(201).json({ message: "Product created successfully", product });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to update product", error: err.message });
+    console.error("Error creating product:", err);
+    res.status(500).json({ error: "Something went wrong while creating the product." });
   }
 };
 
-// Admin: Delete Product
-export const deleteProduct = async (req, res) => {
-  try {
-    await Product.destroy({ where: { id: req.params.id } });
-    res.json({ message: "Product deleted" });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete product", error: err.message });
-  }
-};
-
-// User: Fetch all products (image, name, price only)
-// GET /products?category=3
+// Get all products
 export const getAllProducts = async (req, res) => {
   try {
-    const { category, minPrice, maxPrice, search } = req.query;
-
-    // const whereClause = category ? { category_id: category } : {};
-    const whereClause = {};
-
-     if (category) whereClause.category_id = category;
-
-     if (minPrice || maxPrice) {
-       whereClause.price = {};
-       if (minPrice) whereClause.price[Op.gte] = parseFloat(minPrice);
-       if (maxPrice) whereClause.price[Op.lte] = parseFloat(maxPrice);
-     }
-
-     if (search) {
-       whereClause.name = {
-         [Op.like]: `%${search}%`,
-       };
-    }
-    
     const products = await Product.findAll({
-      where: whereClause,
-      attributes: ["id", "name", "price"],
       include: [
         {
           model: Image,
           where: { related_type: "product" },
           required: false,
-          attributes: ["image_url", "alt_text"],
         },
         {
           model: ProductColor,
-          where: { product_id: { [Op.col]: "Product.id" } }, // Ensures match
-          required: false,
+          include: [
+            {
+              model: Image,
+              where: { related_type: "productColor" },
+              required: false,
+            },
+          ],
+        },
+      ],
+    });
+
+    const formattedProducts = await Promise.all(
+      products.map(async (product) => {
+        const reviews = await Review.findAll({
+          where: { product_id: product.id },
+          attributes: ["rating"],
+        });
+
+        const averageRating =
+          reviews.length > 0
+            ? parseFloat(
+                (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+              )
+            : 0;
+
+        const image =
+          (product.Images && product.Images[0]?.image_url) ||
+          (product.ProductColors?.[0]?.Images?.[0]?.image_url) ||
+          "";
+
+        return {
+          ...product.toJSON(),
+          averageRating,
+          image,
+        };
+      })
+    );
+
+    res.json(formattedProducts);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ error: "Something went wrong while fetching products." });
+  }
+};
+
+// Get product by ID
+export const getProductById = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const product = await Product.findByPk(productId, {
+      include: [
+        {
+          model: ProductVariant,
+          attributes: ["id", "variant_name", "variant_value", "stock", "additional_price"],
+        },
+        {
+          model: ProductColor,
+          attributes: ["id", "color_name"],
           include: [
             {
               model: Image,
@@ -212,196 +162,135 @@ export const getAllProducts = async (req, res) => {
             },
           ],
         },
-      ],
-    });
-
-    const formatted = products.map((product) => {
-      let image = null;
-      if (product.Images?.length > 0) {
-        image = product.Images[0];
-      } else if (product.ProductColors?.length > 0) {
-        const firstColor = product.ProductColors[0];
-        image = firstColor.Images?.[0];
-      }
-
-      return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image_url: image?.image_url || null,
-        alt_text: image?.alt_text || null,
-      };
-    });
-
-    res.json(formatted);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch products", error: err.message });
-  }
-};
-
-
-export const getProductById = async (req, res) => {
-  try {
-    const product = await Product.findByPk(req.params.id, {
-      attributes: ["id", "name", "description", "price"],
-      include: [
         {
           model: Image,
           where: { related_type: "product" },
           required: false,
           attributes: ["image_url", "alt_text"],
         },
-        {
-          model: Review,
-          attributes: ["rating", "comment", "created_at"],
-          include: [
-            {
-              model: User,
-              attributes: ["name"],
-            },
-          ],
-        },
-        {
-          model: ProductVariant,
-          attributes: ["variant_name", "stock", "additional_price"],
-          include: [
-            {
-              model: ProductColor,
-              attributes: ["id", "color_name", "color_code"],
-            },
-          ],
-        },
       ],
     });
 
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product) return res.status(404).json({ error: "Product not found" });
 
-    const avgRatingData = await Review.findOne({
-      attributes: [[fn("AVG", col("rating")), "avgRating"]],
+    const reviews = await Review.findAll({
       where: { product_id: product.id },
-      raw: true,
+      attributes: ["rating"],
     });
 
-    const averageRating = parseFloat(avgRatingData.avgRating || 0).toFixed(1);
+    const averageRating =
+      reviews.length > 0
+        ? parseFloat(
+            (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+          )
+        : 0;
 
-    // Fetch images for each product color
-    const productColors = product.ProductVariants.flatMap((variant) =>
-      variant.ProductColor ? [variant.ProductColor] : []
-    );
-
-    const colorIds = productColors.map((color) => color.id);
-
-    const colorImages = await Image.findAll({
-      where: {
-        related_type: "productColor",
-        related_id: {
-          [Op.in]: colorIds,
-        },
-      },
-      attributes: ["image_url", "alt_text", "related_id"],
-    });
-
-    // Map images to their respective colors
-    const imagesByColorId = {};
-    colorImages.forEach((img) => {
-      if (!imagesByColorId[img.related_id]) {
-        imagesByColorId[img.related_id] = [];
-      }
-      imagesByColorId[img.related_id].push({
-        image_url: img.image_url,
-        alt_text: img.alt_text,
-      });
-    });
-
-    // Attach images array to each color
-    product.ProductVariants.forEach((variant) => {
-      if (variant.ProductColor) {
-        variant.ProductColor.images =
-          imagesByColorId[variant.ProductColor.id] || [];
-      }
-    });
-
-    // Attach average rating to product
-    const productWithRating = {
-      ...product.toJSON(),
-      averageRating,
-    };
-
-    res.json(productWithRating);
+    res.json({ ...product.toJSON(), averageRating });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch product details", error: err.message });
+    console.error("Error getting product by ID:", err);
+    res.status(500).json({ error: "Something went wrong while fetching the product." });
   }
 };
 
-// User: Fetch best sellers products (productname, img, review, price)
+// Update a product
+export const updateProduct = async (req, res) => {
+  const productId = req.params.id;
+  const { name, description, price } = req.body;
+
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+
+    await product.update({ name, description, price });
+
+    res.json({ message: "Product updated successfully", product });
+  } catch (err) {
+    console.error("Error updating product:", err);
+    res.status(500).json({ error: "Something went wrong while updating the product." });
+  }
+};
+
+// Delete a product
+export const deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+
+    await product.destroy();
+    res.json({ message: "Product deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting product:", err);
+    res.status(500).json({ error: "Something went wrong while deleting the product." });
+  }
+};
+
+// Get best-selling products
 export const getBestSellersProducts = async (req, res) => {
   try {
-    // Fetch products with average rating and review count using subqueries
-    const products = await Product.findAll({
+    const bestSellers = await Product.findAll({
       attributes: [
         "id",
         "name",
         "price",
-        [
-          sequelize.literal(`(
-            SELECT AVG(rating)
-            FROM reviews AS review
-            WHERE review.product_id = Product.id
-          )`),
-          "avgRating",
-        ],
-        [
-          sequelize.literal(`(
-            SELECT COUNT(*)
-            FROM reviews AS review
-            WHERE review.product_id = Product.id
-          )`),
-          "reviewCount",
-        ],
+        [sequelize.fn("COUNT", sequelize.col("Orders.id")), "orderCount"],
       ],
       include: [
+        {
+          model: Order,
+          attributes: [],
+        },
         {
           model: Image,
           where: { related_type: "product" },
           required: false,
-          attributes: ["image_url"],
         },
       ],
-      having: sequelize.and(
-        sequelize.literal(`(
-          SELECT AVG(rating)
-          FROM reviews AS review
-          WHERE review.product_id = Product.id
-        ) >= 3`),
-        sequelize.literal(`(
-          SELECT AVG(rating)
-          FROM reviews AS review
-          WHERE review.product_id = Product.id
-        ) <= 5`)
-      ),
-      order: [[sequelize.literal("reviewCount"), "DESC"]],
+      group: ["Product.id", "Images.id"],
+      order: [[sequelize.literal("orderCount"), "DESC"]],
       limit: 10,
-      group: ['Product.id']
     });
 
-    // Format the response
-    const formatted = products.map((product) => {
-      return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image_url: product.Images[0]?.image_url || null,
-        avgRating: parseFloat(product.get("avgRating")) || 0,
-        reviewCount: parseInt(product.get("reviewCount")) || 0,
-      };
-    });
-
-    res.json(formatted);
+    res.json(bestSellers);
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch best sellers", error: err.message });
+    console.error("Error fetching best sellers:", err);
+    res.status(500).json({ error: "Something went wrong while fetching best sellers." });
+  }
+};
+
+// Get product variants
+export const getProductVariants = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const variants = await ProductVariant.findAll({
+      where: { product_id: productId },
+    });
+    res.json(variants);
+  } catch (err) {
+    console.error("Error fetching variants:", err);
+    res.status(500).json({ error: "Something went wrong while fetching variants." });
+  }
+};
+
+// Get product colors
+export const getProductColors = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const colors = await ProductColor.findAll({
+      where: { product_id: productId },
+      include: [
+        {
+          model: Image,
+          where: { related_type: "productColor" },
+          required: false,
+          attributes: ["image_url", "alt_text"],
+        },
+      ],
+    });
+    res.json(colors);
+  } catch (err) {
+    console.error("Error fetching product colors:", err);
+    res.status(500).json({ error: "Something went wrong while fetching product colors." });
   }
 };

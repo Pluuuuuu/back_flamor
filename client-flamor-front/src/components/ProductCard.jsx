@@ -1,47 +1,72 @@
-// src/components/ProductCard.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, token, addToCart }) => {
+  const [inWishlist, setInWishlist] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const token = localStorage.getItem('token'); 
+        const res = await axios.get("http://localhost:5000/api/wishlist", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const found = res.data.find((item) => item.product_id === product.id);
+        setInWishlist(!!found);
+      } catch (err) {
+        console.error("Error fetching wishlist:", err);
+      }
+    };
+
+    fetchWishlist();
+  }, [product.id, token]);
+
+  const handleWishlistToggle = async () => {
+    try {
+      if (!inWishlist) {
+        await axios.post(
+          "http://localhost:5000/api/wishlist",
+          { product_id: product.id }, {
+  withCredentials: true
+});
+
+      } else {
+        await axios.delete(`http://localhost:5000/api/wishlist/${product.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      setInWishlist(!inWishlist);
+    } catch (err) {
+      console.error("Error updating wishlist:", err);
+    }
+  };
+
   return (
     <div className="product-card">
-      <Link to={`/product/${product.id}`}>
+      {/* Only image and name wrapped in Link for navigation */}
+      <Link to={`/product/${product.id}`} className="product-link">
         <img
-          src={product.image_url || "/default.jpg"}
-          alt={product.alt_text || product.name}
-          className="product-image"
+          src={product.image || product.images?.[0]?.url}
+          alt={product.name}
+          onError={(e) => {
+            e.target.src = "https://placehold.co/150x150?text=No+Image";
+          }}
         />
-        <h2 className="product-name">{product.name}</h2>
-        <p className="product-price">${product.price}</p>
+        <h3>{product.name}</h3>
       </Link>
+
+      <p>${product.price}</p>
+
+      <button onClick={handleWishlistToggle} className="wishlist-btn">
+        {inWishlist ? "❤️ Remove from Wishlist" : "🤍 Add to Wishlist"}
+      </button>
+
+      <button onClick={() => addToCart(product.id)} className="add-to-cart-btn">
+        Add to Cart
+      </button>
     </div>
   );
 };
 
 export default ProductCard;
-
-
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// const ProductCard = ({ category }) => {
-//   return (
-//     <Link to={`/shop/${category.id}`} className="product-card">
-//       <div
-//         className="product-image"
-//         style={{
-//           backgroundImage: `url(${category.background_image_url})`,
-//           backgroundSize: "cover",
-//           backgroundPosition: "center",
-//           height: "200px", // or any preferred height
-//         }}
-//       />
-//       <div className="product-details">
-//         <h3>{category.name}</h3>
-//       </div>
-//     </Link>
-//   );
-// };
-
-// export default ProductCard;

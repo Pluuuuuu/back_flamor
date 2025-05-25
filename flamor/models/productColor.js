@@ -9,7 +9,7 @@ export default (sequelize) => {
       image_url: DataTypes.TEXT,
       product_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
     },
     { timestamps: false }

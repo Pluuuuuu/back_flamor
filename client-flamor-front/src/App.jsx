@@ -16,6 +16,9 @@ import Signup from './pages/Signup';
 import AuthForm from './pages/AuthForm';
 import Product from './pages/Product';
 import CheckoutPage from './pages/CheckoutPage';
+import ProductDetails from './pages/ProductDetails';
+import Wishlist from './pages/Wishlist';
+
 
 // Admin Pages
 import AdminDashboard from './admin/AdminDashboard';
@@ -47,6 +50,8 @@ function AppLayout() {
         <Route path="/AuthForm" element={<AuthForm />} />
         <Route path="/product" element={<Product />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path='/whishlist' element={<Wishlist/>} />
 
         {/* Admin Routes inside AdminLayout */}
         <Route
@@ -81,6 +86,15 @@ function AppLayout() {
             </AdminLayout>
           }
         />
+         <Route
+  path="/admin/profile"
+  element={
+    <AdminLayout>
+      <Profile />
+    </AdminLayout>
+  }
+/>
+
       </Routes>
 
       {/* Customer layout */}
