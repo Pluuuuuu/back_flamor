@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ProductCard = ({ product, token, addToCart }) => {
+const ProductCard = ({ product, addToCart }) => {
   const [inWishlist, setInWishlist] = useState(false);
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const token = localStorage.getItem('token'); 
         const res = await axios.get("http://localhost:5000/api/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
         });
         const found = res.data.find((item) => item.product_id === product.id);
         setInWishlist(!!found);
@@ -20,20 +19,19 @@ const ProductCard = ({ product, token, addToCart }) => {
     };
 
     fetchWishlist();
-  }, [product.id, token]);
+  }, [product.id]);
 
   const handleWishlistToggle = async () => {
     try {
       if (!inWishlist) {
         await axios.post(
           "http://localhost:5000/api/wishlist",
-          { product_id: product.id }, {
-  withCredentials: true
-});
-
+          { product_id: product.id },
+          { withCredentials: true }
+        );
       } else {
         await axios.delete(`http://localhost:5000/api/wishlist/${product.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
         });
       }
       setInWishlist(!inWishlist);
@@ -44,7 +42,6 @@ const ProductCard = ({ product, token, addToCart }) => {
 
   return (
     <div className="product-card">
-      {/* Only image and name wrapped in Link for navigation */}
       <Link to={`/product/${product.id}`} className="product-link">
         <img
           src={product.image || product.images?.[0]?.url}
