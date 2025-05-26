@@ -1,0 +1,75 @@
+.admin-categories-container {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #F2E0DF;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(89, 69, 72, 0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #594548;
+}
+
+.admin-categories-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #594548;
+  text-align: center;
+}
+
+.add-category-form {
+  background-color: #F2D5DB;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(217, 145, 164, 0.4);
+  margin-bottom: 2rem;
+  border: 1px solid #D991A4;
+}
+
+.add-category-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #594548;
+}
+
+.add-category-form input[type="text"],
+.add-category-form input[type="file"] {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1.5px solid #D991A4;
+  background-color: #F2E0DF;
+  font-size: 1rem;
+  color: #594548;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.add-category-form button {
+  background-color: #D991A4;
+  color: white;
+  font-weight: 600;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.add-category-form button:hover:not(:disabled) {
+  background-color: #F2B3BF;
+}
+
+.add-category-form button:disabled {
+  background-color: #B0808A;
+  cursor: not-allowed;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}

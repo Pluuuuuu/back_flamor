@@ -1,0 +1,104 @@
+.category-card {
+  background-color: #F2E0DF;
+  border: 1px solid #D991A4;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(89, 69, 72, 0.1);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #594548;
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.category-card:hover {
+  box-shadow: 0 6px 18px rgba(89, 69, 72, 0.2);
+}
+
+.category-card img {
+  width: 100%;
+  height: 180px; /* fixed height to avoid elongation */
+  object-fit: cover; /* crop image nicely */
+  border-radius: 12px;
+  border: 1px solid #D991A4;
+}
+
+.category-id {
+  font-size: 12px;
+  color: #594548;
+  margin-top: 8px;
+}
+
+.category-info {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #594548;
+}
+
+.category-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.category-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.category-button.edit {
+  background-color: #D991A4;
+}
+
+.category-button.edit:hover {
+  background-color: #F2B3BF;
+}
+
+.category-button.delete {
+  background-color: #594548;
+}
+
+.category-button.delete:hover {
+  background-color: #7A6468;
+}
+
+.category-edit-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-edit-form input[type="text"],
+.category-edit-form input[type="file"],
+.category-edit-form input[type="url"] {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #D991A4;
+  background-color: #F2D5DB;
+  color: #594548;
+  font-size: 14px;
+  font-family: inherit;
+  display: block;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.category-edit-form-actions {
+  display: flex;
+  gap: 8px;
+}

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Checkout = ({ cartItems = [], total }) => {
+const Checkout = ({ cartItems = [], total, onClearCart }) => {
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
@@ -12,7 +13,9 @@ const Checkout = ({ cartItems = [], total }) => {
   });
 
   const [message, setMessage] = useState("");
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const isPhoneValid = (phone) => /^\d+$/.test(phone);
 
@@ -32,7 +35,7 @@ const Checkout = ({ cartItems = [], total }) => {
 
     setLoading(true);
     try {
-      // Save shipping info
+      // 1. Save shipping info
       const shippingRes = await axios.post(
         "http://localhost:5000/api/shipping",
         formData,
@@ -40,16 +43,15 @@ const Checkout = ({ cartItems = [], total }) => {
       );
 
       const shipping_id = shippingRes.data.shipping?.id;
-      if (!shipping_id) {
-        throw new Error("Shipping ID not returned from server.");
-      }
+      if (!shipping_id) throw new Error("Shipping ID not returned from server.");
 
+      // 2. Prepare order items
       const orderItems = cartItems.map((item) => ({
         product_id: item.id,
         quantity: item.quantity,
       }));
 
-      // Place order
+      // 3. Place the order
       const orderRes = await axios.post(
         "http://localhost:5000/api/orders",
         { shipping_id, items: orderItems },
@@ -59,11 +61,13 @@ const Checkout = ({ cartItems = [], total }) => {
       const { totalAmount } = orderRes.data;
 
       let finalMsg = "Order placed! Delivery in 3–7 business days.";
-      if (totalAmount >= 125) {
-        finalMsg += " You got free delivery!";
-      }
+      if (totalAmount >= 125) finalMsg += " You got free delivery!";
 
       setMessage(finalMsg);
+      setOrderPlaced(true);
+
+      // 4. Clear cart
+      if (onClearCart) onClearCart();
     } catch (err) {
       console.error(err);
       setMessage(
@@ -76,6 +80,7 @@ const Checkout = ({ cartItems = [], total }) => {
   return (
     <div className="checkout-form">
       <h2>Delivery Information</h2>
+
       <input name="full_name" placeholder="Full Name" onChange={handleChange} />
       <input name="phone" placeholder="Phone Number" onChange={handleChange} />
       <input name="address" placeholder="Address" onChange={handleChange} />
@@ -88,9 +93,15 @@ const Checkout = ({ cartItems = [], total }) => {
         <input type="radio" checked disabled /> Cash on Delivery
       </label>
 
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Placing Order..." : "Place Order"}
-      </button>
+      {!orderPlaced ? (
+        <button onClick={handleSubmit} disabled={loading}>
+          {loading ? "Placing Order..." : "Place Order"}
+        </button>
+      ) : (
+        <button onClick={() => navigate("/orders")}>
+          View My Orders
+        </button>
+      )}
 
       {message && <p>{message}</p>}
     </div>

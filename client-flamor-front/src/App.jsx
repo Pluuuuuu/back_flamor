@@ -26,6 +26,8 @@ import AdminOrders from './admin/AdminOrders';
 import AdminShipments from './admin/AdminShipments';
 import AdminUsers from './admin/AdminUsers';
 import AdminLayout from './components/AdminLayout';
+import AdminCategory from './admin/AdminCategory';
+import AdminProducts from './admin/AdminProducts';
 
 // Layout-aware wrapper component
 function AppLayout() {
@@ -86,14 +88,30 @@ function AppLayout() {
             </AdminLayout>
           }
         />
+        <Route
+          path="/AdminProducts"
+          element={
+            <AdminLayout>
+              <AdminProducts />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/AdminCategory"
+          element={
+            <AdminLayout>
+              <AdminCategory />
+            </AdminLayout>
+          }
+        />
          <Route
-  path="/admin/profile"
-  element={
-    <AdminLayout>
-      <Profile />
-    </AdminLayout>
-  }
-/>
+          path="/admin/profile"
+          element={
+            <AdminLayout>
+              <Profile />
+            </AdminLayout>
+          }
+        />
 
       </Routes>
 

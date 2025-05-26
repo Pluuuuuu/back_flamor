@@ -41,6 +41,8 @@ app.use((err, req, res, next) => {
   next();
 });
 
+import methodOverride from "method-override";
+app.use(methodOverride("_method"));
 
 // API Routes
 app.use("/api/auth", authRoutes);
