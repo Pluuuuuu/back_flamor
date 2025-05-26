@@ -31,7 +31,6 @@ export const createCategory = async (req, res) => {
 };
 
 // Admin: Update category
-// Admin: Update category
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,34 +48,41 @@ export const updateCategory = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       const filePath = req.files[0].path;
+      if (!filePath) {
+        return res.status(400).json({ message: "Invalid image file" });
+      }
+
       console.log("Uploading new image from path:", filePath);
       const imageUrl = await uploadToImgBB(filePath);
       console.log("Image uploaded, URL:", imageUrl);
       updatedFields.background_image_url = imageUrl;
     }
 
-    console.log("Fields to update:", updatedFields);
+    if (Object.keys(updatedFields).length === 0) {
+      return res.status(400).json({ message: "No data to update" });
+    }
 
     const [updated] = await Category.update(updatedFields, {
       where: { id },
     });
 
-    console.log("Number of records updated:", updated);
-
     if (updated === 0) {
-      return res.status(404).json({ message: "Category not found or no changes made" });
+      return res
+        .status(404)
+        .json({ message: "Category not found or no changes made" });
     }
 
-    // Optionally fetch the updated category and return it
     const updatedCategory = await Category.findByPk(id);
-    console.log("Updated Category:", updatedCategory);
-
     res.json({ message: "Category updated", data: updatedCategory });
   } catch (err) {
-    console.error("Update Category Error:", err.message);
-    res.status(500).json({ message: "Failed to update category", error: err.message });
+    console.error("Update Category Error:", err);
+    res.status(500).json({
+      message: "Failed to update category",
+      error: err.message || "Unknown error",
+    });
   }
 };
+
 
 
 // Admin: Delete category

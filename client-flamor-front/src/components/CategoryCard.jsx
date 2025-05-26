@@ -6,22 +6,27 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(category.name);
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(""); // For image URL input
-  const [useUrl, setUseUrl] = useState(false);  // Toggle between file / url
+  const [imageUrl, setImageUrl] = useState("");
+  const [useUrl, setUseUrl] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", name);
 
-      if (useUrl && imageUrl) {
-        formData.append("background_image_url", imageUrl); // Send URL as string field
-        console.log("Using image URL:", imageUrl);
+      if (useUrl && imageUrl.trim()) {
+        // If using image URL input
+        formData.append("background_image_url", imageUrl.trim());
+        console.log("Using image URL:", imageUrl.trim());
       } else if (imageFile) {
-        formData.append("files", imageFile); //backend expects "files"
+        // If using uploaded file
+        formData.append("files", imageFile);
         console.log("Using image file:", imageFile.name);
       } else {
         console.log("No new image provided, keeping existing");
+        // Do NOT append any image field — backend will keep existing image URL
       }
 
       console.log("Sending update request for category id:", category.id);
@@ -39,7 +44,7 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
       );
 
       console.log("Update response:", response.data);
-      onUpdate(); // Refresh list from parent
+      onUpdate(); // Notify parent to refresh categories
       setIsEditing(false);
       setImageFile(null);
       setImageUrl("");
@@ -47,6 +52,8 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
     } catch (err) {
       console.error("Update failed", err);
       alert("Failed to update category.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +75,7 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Category name"
+            required
           />
 
           <div>
@@ -105,8 +113,12 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
           )}
 
           <div className="category-edit-form-actions">
-            <button type="submit" className="category-button edit">
-              Save
+            <button
+              type="submit"
+              className="category-button edit"
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
@@ -116,8 +128,9 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
                 setImageFile(null);
                 setImageUrl("");
                 setUseUrl(false);
-                setName(category.name); // reset
+                setName(category.name);
               }}
+              disabled={loading}
             >
               Cancel
             </button>
@@ -136,6 +149,7 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
             <button
               className="category-button delete"
               onClick={() => onDelete(category.id)}
+              disabled={loading}
             >
               Delete
             </button>
