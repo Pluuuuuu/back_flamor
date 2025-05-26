@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../adminstyle/AdminProducts.css";
+import AddProductForm from "./AddProductForm";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -568,94 +569,7 @@ function AdminProducts() {
       {showAddModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Add New Product</h3>
-            <label>
-              Product Name:
-              <input
-                type="text"
-                name="name"
-                value={addForm.name}
-                onChange={handleAddInputChange}
-              />
-            </label>
-            <label>
-              Category ID:
-              <input
-                type="text"
-                name="category_id"
-                value={addForm.category_id}
-                onChange={handleAddInputChange}
-              />
-            </label>
-
-            <label>
-              Product Images:
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleAddProductImageChange}
-              />
-            </label>
-
-            <div className="add-images-preview">
-              {addForm.images.map((img, idx) => (
-                <div key={idx} className="image-edit-wrapper">
-                  <img
-                    src={img.image_url}
-                    alt=""
-                    style={{ width: 80, height: 80, objectFit: "cover" }}
-                  />
-                  <button onClick={() => removeAddProductImage(idx)}>Remove</button>
-                </div>
-              ))}
-            </div>
-
-            {/* Variants (Colors) */}
-            <h4>Variants (Colors):</h4>
-            {addForm.variants.map((variant, i) => (
-              <div key={i} className="variant-add">
-                <label>
-                  Color Name:
-                  <input
-                    type="text"
-                    value={variant.color_name}
-                    onChange={(e) => handleAddVariantColorChange(i, e.target.value)}
-                  />
-                </label>
-
-                <label>
-                  Variant Images:
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleAddVariantImagesChange(i, e)}
-                  />
-                </label>
-
-                <div className="add-images-preview">
-                  {variant.images.map((img, idx) => (
-                    <div key={idx} className="image-edit-wrapper">
-                      <img
-                        src={img.image_url}
-                        alt=""
-                        style={{ width: 80, height: 80, objectFit: "cover" }}
-                      />
-                      <button onClick={() => removeAddVariantImage(i, idx)}>Remove</button>
-                    </div>
-                  ))}
-                </div>
-
-                <button onClick={() => removeVariant(i)}>Remove Variant</button>
-              </div>
-            ))}
-            <button onClick={addVariant}>+ Add Variant</button>
-
-            <div className="modal-buttons">
-              <button onClick={handleAddSave}>Save Product</button>
-              <button onClick={closeAddModal}>Cancel</button>
-            </div>
+          <AddProductForm/>
           </div>
         </div>
       )}
