@@ -20,13 +20,13 @@ body {
   margin-bottom: 40px;
   background: #fff;
   padding: 20px;
-  border-radius: 8px;
+  /* border-radius: 8px; */
 }
 
 .product-image {
   width: 300px;
   height: auto;
-  border-radius: 8px;
+  /* border-radius: 8px; */
 }
 
 .product-details {

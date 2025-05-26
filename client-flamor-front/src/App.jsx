@@ -23,7 +23,7 @@ import Wishlist from './pages/Wishlist';
 // Admin Pages
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrders';
-import AdminShipments from './admin/AdminShipments';
+import AddProductForm from './admin/AddProductForm';
 import AdminUsers from './admin/AdminUsers';
 import AdminLayout from './components/AdminLayout';
 import AdminCategory from './admin/AdminCategory';
@@ -53,7 +53,7 @@ function AppLayout() {
         <Route path="/product" element={<Product />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path='/whishlist' element={<Wishlist/>} />
+        <Route path='/wishlist' element={<Wishlist/>} />
 
         {/* Admin Routes inside AdminLayout */}
         <Route
@@ -81,10 +81,10 @@ function AppLayout() {
           }
         />
         <Route
-          path="/AdminShipments"
+          path="/AddProductForm"
           element={
             <AdminLayout>
-              <AdminShipments />
+              <AddProductForm />
             </AdminLayout>
           }
         />

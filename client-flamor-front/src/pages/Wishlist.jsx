@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "../styles/wishlist.css"
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -38,50 +39,51 @@ const Wishlist = () => {
     navigate(`/product/${productId}`);
   };
 
-  return (
-    <div>
-      <h2>My Wishlist</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {wishlistItems.length === 0 ? (
-        <p>No items in wishlist.</p>
-      ) : (
-        wishlistItems.map((item) => (
+
+
+  
+  return (<div className="wishlist-page-body">
+    
+  <h2 className="wishlist-title">My Wishlist</h2>
+
+  <div className="wishlist-container">
+    {error && <p style={{ color: "red" }}>{error}</p>}
+    {wishlistItems.length === 0 ? (
+      <p>No items in wishlist.</p>
+    ) : (
+      wishlistItems.map((item) => (
+        <div key={item.product_id} className="wishlist-item">
           <div
-            key={item.product_id}
-            style={{
-              borderBottom: "1px solid #ccc",
-              padding: "10px",
-              display: "flex",
-              alignItems: "center",
-              gap: "15px",
-            }}
+            className="wishlist-item-content"
+            onClick={() => handleNavigate(item.product_id)}
           >
-            <div
-              style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
-              onClick={() => handleNavigate(item.product_id)}
-            >
-              {item.Product?.Images?.[0]?.image_url && (
-                <img
-                  src={item.Product.Images[0].image_url}
-                  alt={item.Product.Images[0].alt_text || "Product Image"}
-                  width={100}
-                  onError={(e) => {
-                    e.target.src = "https://placehold.co/100x100?text=No+Image";
-                  }}
-                />
-              )}
-              <div>
-                <h3>{item.Product?.name}</h3>
-                <p>${item.Product?.price}</p>
-              </div>
+            {item.Product?.Images?.[0]?.image_url && (
+              <img
+                src={item.Product.Images[0].image_url}
+                alt={item.Product.Images[0].alt_text || "Product Image"}
+                className="wishlist-item-image"
+                onError={(e) => {
+                  e.target.src = "https://placehold.co/100x100?text=No+Image";
+                }}
+              />
+            )}
+            <div className="wishlist-item-details">
+              <h3>{item.Product?.name}</h3>
+              <p>${item.Product?.price}</p>
             </div>
-            <button onClick={() => handleRemove(item.product_id)} style={{ marginLeft: "auto" }}>
-              ❌ Remove
-            </button>
           </div>
-        ))
-      )}
-    </div>
+          <button
+            className="remove-btn"
+            onClick={() => handleRemove(item.product_id)}
+          >
+            ❌ Remove
+          </button>
+        </div>
+      ))
+    )}
+  </div>
+</div>
+
   );
 };
 

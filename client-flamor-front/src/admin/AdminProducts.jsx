@@ -13,6 +13,15 @@ function AdminProducts() {
     images: [],
   });
 
+  // New states for Add Product modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({
+    name: "",
+    category_id: "",
+    images: [],
+    variants: [], // variants = [{ color_name, images: [], sizes: [] }]
+  });
+
   // Fetch all products with variants/colors/images
   useEffect(() => {
     console.log("Fetching all products...");
@@ -52,16 +61,15 @@ function AdminProducts() {
       return;
     }
 
-    // Map product details to editForm state
     setEditForm({
       name: productDetails.name || "",
       category_id: productDetails.category_id || "",
-      variants: productDetails.ProductColors?.map((color) => ({
-        id: color.id,
-        color_name: color.color_name,
-        images: color.Images || [],
-        // Note: ProductVariants linked by color are fetched in main productVariant model
-      })) || [],
+      variants:
+        productDetails.ProductColors?.map((color) => ({
+          id: color.id,
+          color_name: color.color_name,
+          images: color.Images || [],
+        })) || [],
       images: productDetails.Images || [],
     });
 
@@ -77,7 +85,7 @@ function AdminProducts() {
     }));
   };
 
-  // Update variants and colors images in the form (simple example)
+  // Update variants and colors images in the edit form (simple example)
   const handleVariantChange = (index, field, value) => {
     setEditForm((prev) => {
       const variants = [...prev.variants];
@@ -90,6 +98,44 @@ function AdminProducts() {
         variants,
       };
     });
+  };
+
+  // Handle main product images change for editing form
+  const handleEditProductImageChange = (e, imgIndex) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Convert to base64 for preview, could also upload here
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEditForm((prev) => {
+        const newImages = [...prev.images];
+        newImages[imgIndex] = { ...newImages[imgIndex], image_url: reader.result };
+        return {
+          ...prev,
+          images: newImages,
+        };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle variant image change for editing form
+  const handleEditVariantImageChange = (variantIndex, imgIndex, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEditForm((prev) => {
+        const variants = [...prev.variants];
+        const images = [...variants[variantIndex].images];
+        images[imgIndex] = { ...images[imgIndex], image_url: reader.result };
+        variants[variantIndex] = { ...variants[variantIndex], images };
+        return { ...prev, variants };
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   // Submit update product request
@@ -110,7 +156,6 @@ function AdminProducts() {
 
       // For each variant/color, update color info & images
       for (const color of editForm.variants) {
-        // Update color
         await axios.put(
           `http://localhost:5000/api/product-colors/${color.id}`,
           {
@@ -119,9 +164,6 @@ function AdminProducts() {
           { withCredentials: true }
         );
         console.log(`Updated color id ${color.id}`);
-
-        // For images, you might want to implement upload or delete logic here.
-        // This example assumes you send images via separate calls or as part of update if supported.
       }
 
       alert("Product updated successfully.");
@@ -158,10 +200,204 @@ function AdminProducts() {
     }
   };
 
+  // -----------------------
+  // New handlers for Add Product modal below
+  // -----------------------
+
+  const openAddModal = () => {
+    setAddForm({
+      name: "",
+      category_id: "",
+      images: [],
+      variants: [],
+    });
+    setShowAddModal(true);
+  };
+
+  const closeAddModal = () => {
+    setShowAddModal(false);
+  };
+
+  // Handle add form input change (name, category)
+  const handleAddInputChange = (e) => {
+    const { name, value } = e.target;
+    setAddForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle adding main images for new product
+  const handleAddProductImageChange = (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    // We support multiple images
+    const fileArray = Array.from(files);
+
+    Promise.all(
+      fileArray.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({ image_url: reader.result });
+            };
+            reader.readAsDataURL(file);
+          })
+      )
+    ).then((images) => {
+      setAddForm((prev) => ({
+        ...prev,
+        images: [...prev.images, ...images],
+      }));
+    });
+  };
+
+  // Add variant (color)
+  const addVariant = () => {
+    setAddForm((prev) => ({
+      ...prev,
+      variants: [...prev.variants, { color_name: "", images: [], sizes: [] }],
+    }));
+  };
+
+  // Remove variant
+  const removeVariant = (index) => {
+    setAddForm((prev) => {
+      const variants = [...prev.variants];
+      variants.splice(index, 1);
+      return { ...prev, variants };
+    });
+  };
+
+  // Handle variant color name change in add form
+  const handleAddVariantColorChange = (index, value) => {
+    setAddForm((prev) => {
+      const variants = [...prev.variants];
+      variants[index].color_name = value;
+      return { ...prev, variants };
+    });
+  };
+
+  // Handle variant images upload in add form
+  const handleAddVariantImagesChange = (index, e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    const fileArray = Array.from(files);
+
+    Promise.all(
+      fileArray.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({ image_url: reader.result });
+            };
+            reader.readAsDataURL(file);
+          })
+      )
+    ).then((images) => {
+      setAddForm((prev) => {
+        const variants = [...prev.variants];
+        variants[index].images = [...variants[index].images, ...images];
+        return { ...prev, variants };
+      });
+    });
+  };
+
+  // Remove variant image from add form
+  const removeAddVariantImage = (variantIndex, imgIndex) => {
+    setAddForm((prev) => {
+      const variants = [...prev.variants];
+      variants[variantIndex].images.splice(imgIndex, 1);
+      return { ...prev, variants };
+    });
+  };
+
+  // Remove main product image from add form
+  const removeAddProductImage = (imgIndex) => {
+    setAddForm((prev) => {
+      const images = [...prev.images];
+      images.splice(imgIndex, 1);
+      return { ...prev, images };
+    });
+  };
+
+  // Submit new product creation
+  const handleAddSave = async () => {
+    try {
+      // 1. Create product with name & category
+      const resProduct = await axios.post(
+        "http://localhost:5000/api/products",
+        {
+          name: addForm.name,
+          category_id: addForm.category_id,
+        },
+        { withCredentials: true }
+      );
+
+      const productId = resProduct.data.id;
+      console.log("Created product id:", productId);
+
+      // 2. Upload product images (assuming your backend supports batch upload or individual upload)
+      for (const img of addForm.images) {
+        await axios.post(
+          "http://localhost:5000/api/product-images",
+          {
+            product_id: productId,
+            image_url: img.image_url,
+          },
+          { withCredentials: true }
+        );
+      }
+
+      // 3. For each variant, create variant, upload variant images
+      for (const variant of addForm.variants) {
+        // Create variant color
+        const resColor = await axios.post(
+          "http://localhost:5000/api/product-colors",
+          {
+            product_id: productId,
+            color_name: variant.color_name,
+          },
+          { withCredentials: true }
+        );
+        const colorId = resColor.data.id;
+
+        // Upload variant images
+        for (const img of variant.images) {
+          await axios.post(
+            "http://localhost:5000/api/product-color-images",
+            {
+              product_color_id: colorId,
+              image_url: img.image_url,
+            },
+            { withCredentials: true }
+          );
+        }
+
+        // If you want to add sizes etc, you can extend here
+      }
+
+      alert("Product added successfully!");
+      setShowAddModal(false);
+
+      // Refresh product list
+      const res = await axios.get("http://localhost:5000/api/products", {
+        withCredentials: true,
+      });
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Failed to add product:", error);
+      alert("Failed to add product.");
+    }
+  };
+
   return (
     <div className="admin-products">
       <h2>Manage Products</h2>
-      <button className="add-product-button">+ Add Product</button>
+      <button className="add-product-button" onClick={openAddModal}>
+        + Add Product
+      </button>
 
       {loading ? (
         <p>Loading...</p>
@@ -192,7 +428,6 @@ function AdminProducts() {
                   const maxPrice = allPrices.length ? Math.max(...allPrices) : null;
                   const totalStock = allStock.reduce((sum, s) => sum + (s || 0), 0);
 
-                  // Use product main image or fallback
                   const firstImage =
                     (prod.Images && prod.Images[0]?.image_url) ||
                     (prod.ProductColors?.[0]?.Images?.[0]?.image_url) ||
@@ -219,8 +454,7 @@ function AdminProducts() {
                         {prod.ProductColors?.length > 0 ? (
                           prod.ProductColors.map((v, i) => (
                             <div key={i}>
-                              {v.color_name || "No color"} (
-                              {v.Images?.length || 0} images)
+                              {v.color_name || "No color"} ({v.Images?.length || 0} images)
                             </div>
                           ))
                         ) : (
@@ -267,6 +501,25 @@ function AdminProducts() {
                 />
               </label>
 
+              {/* Main Images Edit */}
+              <h4>Product Images:</h4>
+              <div className="edit-images">
+                {editForm.images.map((img, idx) => (
+                  <div key={idx} className="image-edit-wrapper">
+                    <img
+                      src={img.image_url}
+                      alt={img.alt_text || ""}
+                      style={{ width: 80, height: 80, objectFit: "cover" }}
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleEditProductImageChange(e, idx)}
+                    />
+                  </div>
+                ))}
+              </div>
+
               {/* Variants (Colors) Edit */}
               <h4>Variants (Colors):</h4>
               {editForm.variants.map((variant, i) => (
@@ -283,11 +536,16 @@ function AdminProducts() {
                   <div>
                     Images:
                     {variant.images?.map((img, idx) => (
-                      <div key={idx}>
+                      <div key={idx} className="image-edit-wrapper">
                         <img
                           src={img.image_url}
                           alt={img.alt_text || ""}
                           style={{ width: 80, height: 80, objectFit: "cover" }}
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleEditVariantImageChange(i, idx, e)}
                         />
                       </div>
                     ))}
@@ -304,6 +562,102 @@ function AdminProducts() {
             </div>
           )}
         </>
+      )}
+
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Add New Product</h3>
+            <label>
+              Product Name:
+              <input
+                type="text"
+                name="name"
+                value={addForm.name}
+                onChange={handleAddInputChange}
+              />
+            </label>
+            <label>
+              Category ID:
+              <input
+                type="text"
+                name="category_id"
+                value={addForm.category_id}
+                onChange={handleAddInputChange}
+              />
+            </label>
+
+            <label>
+              Product Images:
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleAddProductImageChange}
+              />
+            </label>
+
+            <div className="add-images-preview">
+              {addForm.images.map((img, idx) => (
+                <div key={idx} className="image-edit-wrapper">
+                  <img
+                    src={img.image_url}
+                    alt=""
+                    style={{ width: 80, height: 80, objectFit: "cover" }}
+                  />
+                  <button onClick={() => removeAddProductImage(idx)}>Remove</button>
+                </div>
+              ))}
+            </div>
+
+            {/* Variants (Colors) */}
+            <h4>Variants (Colors):</h4>
+            {addForm.variants.map((variant, i) => (
+              <div key={i} className="variant-add">
+                <label>
+                  Color Name:
+                  <input
+                    type="text"
+                    value={variant.color_name}
+                    onChange={(e) => handleAddVariantColorChange(i, e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Variant Images:
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleAddVariantImagesChange(i, e)}
+                  />
+                </label>
+
+                <div className="add-images-preview">
+                  {variant.images.map((img, idx) => (
+                    <div key={idx} className="image-edit-wrapper">
+                      <img
+                        src={img.image_url}
+                        alt=""
+                        style={{ width: 80, height: 80, objectFit: "cover" }}
+                      />
+                      <button onClick={() => removeAddVariantImage(i, idx)}>Remove</button>
+                    </div>
+                  ))}
+                </div>
+
+                <button onClick={() => removeVariant(i)}>Remove Variant</button>
+              </div>
+            ))}
+            <button onClick={addVariant}>+ Add Variant</button>
+
+            <div className="modal-buttons">
+              <button onClick={handleAddSave}>Save Product</button>
+              <button onClick={closeAddModal}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
