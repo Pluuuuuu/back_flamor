@@ -1,22 +1,23 @@
-import "../styles/Home.css"
-import modelImage from "../assets/model.png"
-import circles from "../assets/CIRCLES.png"
-import ellipse from "../assets/EllipseS.svg"
-import flourneck from "../assets/flowerneck.png"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
-import Button from "../components/Button"
-import React, { useEffect, useState } from "react"
-import axios from "axios"
-import ProductCard from "../components/ProductCard"
-import { Link } from "react-router-dom"
+import "../styles/Home.css";
+import modelImage from "../assets/model.png";
+import circles from "../assets/CIRCLES.png";
+import ellipse from "../assets/EllipseS.svg";
+import flourneck from "../assets/flowerneck.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Button from "../components/Button";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ProductCard from "../components/ProductCard";
+import { Link } from "react-router-dom";
 import { fetchCategories } from "../api/categoryApi";
 
 export default function Home() {
-  const [products, setProducts] = useState([])
-  const [categories, setCategories] = useState([])
-  const [userRole, setUserRole] = useState(null)
-  const [popup, setPopup] = useState({ message: "", visible: false })
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [userRole, setUserRole] = useState(null);
+  const [popup, setPopup] = useState({ message: "", visible: false });
+  const [inWishlist, setInWishlist] = useState(false); // Added this to fix wishlist toggle
 
   // Fetch user role
   useEffect(() => {
@@ -25,43 +26,55 @@ export default function Home() {
         withCredentials: true,
       })
       .then((res) => {
-        setUserRole(res.data.role)
+        setUserRole(res.data.role);
       })
-      .catch(() => {
-        setUserRole(null)
-      })
-  }, [])
+      .catch((err) => {
+        if (err.response?.status !== 401) {
+          console.error("Unexpected error:", err);
+        }
+        setUserRole(null); // Not logged in
+      });
+  }, []);
 
-  // Fetch all products
+  // Fetch all products with safety check
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/products")
       .then((res) => {
-        setProducts(res.data)
+        if (Array.isArray(res.data)) {
+          setProducts(res.data);
+        } else if (Array.isArray(res.data.products)) {
+          // Fallback if data is wrapped
+          setProducts(res.data.products);
+        } else {
+          console.error("Expected array but got:", res.data);
+          setProducts([]);
+        }
       })
       .catch((err) => {
-        console.error(err)
-      })
-  }, [])
+        console.error("Failed to fetch products:", err);
+        setProducts([]);
+      });
+  }, []);
 
   // Fetch categories
-useEffect(() => {
-  const loadCategories = async () => {
-    const data = await fetchCategories();
-    setCategories(data);
-  };
-  loadCategories();
-}, []);
+  useEffect(() => {
+    const loadCategories = async () => {
+      const data = await fetchCategories();
+      setCategories(data);
+    };
+    loadCategories();
+  }, []);
 
   const showPopup = (message) => {
-    setPopup({ message, visible: true })
-    setTimeout(() => setPopup({ message: "", visible: false }), 3000)
-  }
+    setPopup({ message, visible: true });
+    setTimeout(() => setPopup({ message: "", visible: false }), 3000);
+  };
 
   const handleAddToCart = (productId) => {
     if (userRole !== "customer") {
-      showPopup("You must be logged in as a customer to add to cart.")
-      return
+      showPopup("You must be logged in as a customer to add to cart.");
+      return;
     }
 
     axios
@@ -74,17 +87,18 @@ useEffect(() => {
         { withCredentials: true }
       )
       .then(() => {
-        showPopup("Product added to cart!")
+        showPopup("Product added to cart!");
       })
       .catch((err) => {
-        console.error("Add to cart failed:", err)
-        showPopup("Failed to add to cart.")
-      })
-  }
+        console.error("Add to cart failed:", err);
+        showPopup("Failed to add to cart.");
+      });
+  };
+
   const handleAddToWishlist = async (productId) => {
     if (userRole !== "customer") {
-      showPopup("You must be logged in as a customer to add to wishlist.")
-      return
+      showPopup("You must be logged in as a customer to add to wishlist.");
+      return;
     }
     try {
       if (!inWishlist) {
@@ -92,20 +106,18 @@ useEffect(() => {
           "http://localhost:5000/api/wishlist",
           { product_id: productId },
           { withCredentials: true }
-        )
+        );
       } else {
         await axios.delete(
           `http://localhost:5000/api/wishlist/${productId}`,
-          {
-            withCredentials: true,
-          }
-        )
+          { withCredentials: true }
+        );
       }
-      setInWishlist(!inWishlist)
+      setInWishlist(!inWishlist);
     } catch (err) {
-      console.error("Error updating wishlist:", err)
+      console.error("Error updating wishlist:", err);
     }
-  }
+  };
 
   return (
     <>
@@ -113,11 +125,7 @@ useEffect(() => {
         <h3 className="add-sparkle">ADD THE SPARKLE</h3>
         <h1 className="title">FLAMORY</h1>
         <Button className="pinkBtn">Steal the Look</Button>
-        <Button
-          className="lightBtn"
-          backgroundColor="#f2e0df"
-          color="#d991a4"
-        >
+        <Button className="lightBtn" backgroundColor="#f2e0df" color="#d991a4">
           Learn More
         </Button>
         <button id="vertical-btn">FASHIONABLE</button>
@@ -148,18 +156,18 @@ useEffect(() => {
         </div>
       </section>
 
-
       <section className="featured-container">
         <h2 className="featured-title">Featured Products</h2>
         <div className="featured-grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              addToCart={handleAddToCart}
-              addToWishlist={handleAddToWishlist}
-            />
-          ))}
+          {Array.isArray(products) &&
+            products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                addToCart={handleAddToCart}
+                addToWishlist={handleAddToWishlist}
+              />
+            ))}
         </div>
         {popup.visible && (
           <div className="popup-notification">{popup.message}</div>
@@ -187,5 +195,5 @@ useEffect(() => {
         </div>
       </section>
     </>
-  )
+  );
 }
