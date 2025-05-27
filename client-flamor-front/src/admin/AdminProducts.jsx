@@ -158,7 +158,7 @@ function AdminProducts() {
       // For each variant/color, update color info & images
       for (const color of editForm.variants) {
         await axios.put(
-          `http://localhost:5000/api/product-colors/${color.id}`,
+          `http://localhost:5000/api/productcolors/${color.id}`,
           {
             color_name: color.color_name,
           },
@@ -355,7 +355,7 @@ function AdminProducts() {
       for (const variant of addForm.variants) {
         // Create variant color
         const resColor = await axios.post(
-          "http://localhost:5000/api/product-colors",
+          "http://localhost:5000/api/productcolors",
           {
             product_id: productId,
             color_name: variant.color_name,
@@ -529,7 +529,7 @@ function AdminProducts() {
                     Color Name:
                     <input
                       type="text"
-                      value={variant.color_name}
+                      value={variant.color_name ?? ''}
                       onChange={(e) => handleVariantChange(i, "color_name", e.target.value)}
                     />
                   </label>
@@ -568,11 +568,12 @@ function AdminProducts() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
-          <AddProductForm/>
-          </div>
-        </div>
-      )}
+      <div className="modal-content">
+      <button className="close-modal" onClick={closeAddModal}>×</button>
+      <AddProductForm />
+    </div>
+  </div>
+)}
     </div>
   );
 }
