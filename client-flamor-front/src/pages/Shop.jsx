@@ -9,7 +9,6 @@ const Shop = () => {
   const [userRole, setUserRole] = useState(null)
   const [popup, setPopup] = useState({ message: "", visible: false })
 
-  // Fetch user role
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/users/me", {
@@ -23,7 +22,6 @@ const Shop = () => {
       })
   }, [])
 
-  // Fetch all products
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/products")
@@ -63,11 +61,13 @@ const Shop = () => {
         showPopup("Failed to add to cart.")
       })
   }
-  const handleAddToWishlist = async (productId) => {
+
+  const handleAddToWishlist = async (productId, inWishlist, setInWishlist) => {
     if (userRole !== "customer") {
       showPopup("You must be logged in as a customer to add to wishlist.")
       return
     }
+
     try {
       if (!inWishlist) {
         await axios.post(
@@ -88,6 +88,7 @@ const Shop = () => {
       console.error("Error updating wishlist:", err)
     }
   }
+
   return (
     <div className="shop-page">
       <div className="shop-header">

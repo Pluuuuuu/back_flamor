@@ -2,6 +2,7 @@ import React from "react"
 import logo from "../assets/logo.png"
 import cart from "../assets/cart.png"
 import icon from "../assets/icon.jpg"
+import heart from "../assets/heart.png"
 import "./Navbar.css" // Optional: for styling
 import { Link } from "react-router-dom"
 
@@ -67,9 +68,21 @@ const Navbar = () => {
             onClick={() =>
               window.scrollTo({ top: 0, behavior: "smooth" })
             }
+            to="/wishlist"
+          >
+            <img className="top-banner-img" src={heart} alt="heart" />
+          </Link>
+          <Link
+            onClick={() =>
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }
             to="/authform"
           >
-            <img className="top-banner-img img-usr" src={icon} alt="User Icon" />
+            <img
+              className="top-banner-img img-usr"
+              src={icon}
+              alt="User Icon"
+            />
           </Link>
         </div>
       </div>

@@ -1,0 +1,100 @@
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+  font-family: sans-serif;
+  align-items: flex-start;
+  padding: 7rem 0 ;
+}
+
+.product-image {
+  flex: 1 1 400px;
+  max-width: 400px;
+}
+
+.product-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+  flex: 1 1 500px;
+  max-width: 500px;
+}
+
+.product-info h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-info .description {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.product-info .price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #c89b3c;
+  margin-bottom: 0.5rem;
+}
+
+.product-info .stock,
+.product-info .variant,
+.product-info .color {
+  margin-bottom: 0.5rem;
+}
+
+.buttons {
+  margin-top: 1.5rem;
+}
+
+.cart-button,
+.wishlist-button {
+  padding: 0.75rem 1.5rem;
+  margin-right: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cart-button {
+  background-color: #d8829c;
+  color: white;
+}
+
+.wishlist-button {
+  background-color: #d8829c;
+  color: white;
+}
+
+.popup-notification {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #333;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  z-index: 1000;
+  opacity: 0.9;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}

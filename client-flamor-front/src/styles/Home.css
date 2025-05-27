@@ -135,21 +135,21 @@
   right: 900px;
 }
 
-.categories-container {
+.home-categories-container {
   padding: 40px 20px;
   background-color: #fafafa;
   width: 100%;
   box-sizing: border-box;
 }
 
-.categories-title {
+.home-categories-title {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 2rem;
   color: #333;
 }
 
-.categories-grid {
+.home-categories-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(280px, 1fr));
   gap: 2rem;
@@ -157,22 +157,21 @@
 }
 
 @media (max-width: 900px) {
-  .categories-grid {
+  .home-categories-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .categories-grid {
+  .home-categories-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.category-card {
-  aspect-ratio: 1; /* Maintains proportional height */
-  width: 80%; /* Takes full available width of the grid column */
+.home-category-card {
+  aspect-ratio: 1;
+  width: 80%; 
   max-width: 400px;
-  /* border-radius: 8px; */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -183,23 +182,22 @@
   box-sizing: border-box;
 }
 
-.category-card:hover {
+.home-category-card:hover {
   transform: translateY(-5px);
 }
 
-.category-card img {
+.home-category-card img {
   width: 100%;
   height: 80%;
   object-fit: cover;
-  /* border-radius: 6px; */
 }
 
-.category-card h3 {
+.home-category-card h3 {
   font-size: 1.2rem;
   margin: 10px 0 5px;
 }
 
-.category-card p {
+.home-category-card p {
   font-size: 1rem;
   color: #555;
 }
@@ -325,5 +323,36 @@
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+}
+.home-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.home-category-card {
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.home-category-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.home-category-card:hover {
+  transform: translateY(-4px);
+}
+
+.home-category-card h3 {
+  margin-top: 10px;
   font-size: 1rem;
 }

@@ -3,8 +3,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #E3F2FD;
+    height: 70vh;
+    background-color: #f3cbd7;
+    margin: 5vh 20vw 10vh;
   }
   
   .profile-card {
@@ -26,13 +27,12 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-
     margin-bottom: 15px;
   }
   
   /* User Info */
   .user-info h2, .user-info p {
-    color: #73A2BF;
+    color: black;
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 5px;
@@ -52,7 +52,7 @@
   
   /* Buttons */
   .edit-button, .save-button {
-    background: #73A2BF;
+    background: #c67c91;
     color: white;
     border: none;
     padding: 8px 15px;

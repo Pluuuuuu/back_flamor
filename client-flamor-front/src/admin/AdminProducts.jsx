@@ -1,65 +1,70 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "../adminstyle/AdminProducts.css";
-import AddProductForm from "./AddProductForm";
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import "../adminstyle/AdminProducts.css"
+import AddProductForm from "./AddProductForm"
 
 function AdminProducts() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [editingProduct, setEditingProduct] = useState(null)
   const [editForm, setEditForm] = useState({
     name: "",
     category_id: "",
     variants: [],
     images: [],
-  });
+  })
 
   // New states for Add Product modal
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false)
   const [addForm, setAddForm] = useState({
     name: "",
     category_id: "",
     images: [],
     variants: [], // variants = [{ color_name, images: [], sizes: [] }]
-  });
+  })
 
   // Fetch all products with variants/colors/images
   useEffect(() => {
-    console.log("Fetching all products...");
+    console.log("Fetching all products...")
     axios
-      .get("http://localhost:5000/api/products", { withCredentials: true })
+      .get("http://localhost:5000/api/products", {
+        withCredentials: true,
+      })
       .then((res) => {
-        console.log("Products fetched:", res.data);
-        setProducts(res.data);
-        setLoading(false);
+        console.log("Products fetched:", res.data)
+        setProducts(res.data)
+        setLoading(false)
       })
       .catch((err) => {
-        console.error("Error fetching products:", err);
-        setLoading(false);
-      });
-  }, []);
+        console.error("Error fetching products:", err)
+        setLoading(false)
+      })
+  }, [])
 
   // Fetch full product details by id (for editing)
   const fetchProductDetails = async (id) => {
-    console.log("Fetching product details for edit, id:", id);
+    console.log("Fetching product details for edit, id:", id)
     try {
-      const res = await axios.get(`http://localhost:5000/api/products/${id}`, {
-        withCredentials: true,
-      });
-      console.log("Product details fetched:", res.data);
-      return res.data;
+      const res = await axios.get(
+        `http://localhost:5000/api/products/${id}`,
+        {
+          withCredentials: true,
+        }
+      )
+      console.log("Product details fetched:", res.data)
+      return res.data
     } catch (error) {
-      console.error("Error fetching product details:", error);
-      return null;
+      console.error("Error fetching product details:", error)
+      return null
     }
-  };
+  }
 
   // Open edit modal/form and load product data
   const handleEdit = async (id) => {
-    const productDetails = await fetchProductDetails(id);
+    const productDetails = await fetchProductDetails(id)
     if (!productDetails) {
-      alert("Failed to load product details for editing.");
-      return;
+      alert("Failed to load product details for editing.")
+      return
     }
 
     setEditForm({
@@ -72,76 +77,82 @@ function AdminProducts() {
           images: color.Images || [],
         })) || [],
       images: productDetails.Images || [],
-    });
+    })
 
-    setEditingProduct(productDetails.id);
-  };
+    setEditingProduct(productDetails.id)
+  }
 
   // Handle input changes for editing form fields (name, category_id)
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setEditForm((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   // Update variants and colors images in the edit form (simple example)
   const handleVariantChange = (index, field, value) => {
     setEditForm((prev) => {
-      const variants = [...prev.variants];
+      const variants = [...prev.variants]
       variants[index] = {
         ...variants[index],
         [field]: value,
-      };
+      }
       return {
         ...prev,
         variants,
-      };
-    });
-  };
+      }
+    })
+  }
 
   // Handle main product images change for editing form
   const handleEditProductImageChange = (e, imgIndex) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]
+    if (!file) return
 
     // Convert to base64 for preview, could also upload here
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = () => {
       setEditForm((prev) => {
-        const newImages = [...prev.images];
-        newImages[imgIndex] = { ...newImages[imgIndex], image_url: reader.result };
+        const newImages = [...prev.images]
+        newImages[imgIndex] = {
+          ...newImages[imgIndex],
+          image_url: reader.result,
+        }
         return {
           ...prev,
           images: newImages,
-        };
-      });
-    };
-    reader.readAsDataURL(file);
-  };
+        }
+      })
+    }
+    reader.readAsDataURL(file)
+  }
 
   // Handle variant image change for editing form
   const handleEditVariantImageChange = (variantIndex, imgIndex, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]
+    if (!file) return
 
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = () => {
       setEditForm((prev) => {
-        const variants = [...prev.variants];
-        const images = [...variants[variantIndex].images];
-        images[imgIndex] = { ...images[imgIndex], image_url: reader.result };
-        variants[variantIndex] = { ...variants[variantIndex], images };
-        return { ...prev, variants };
-      });
-    };
-    reader.readAsDataURL(file);
-  };
+        const variants = [...prev.variants]
+        const images = [...variants[variantIndex].images]
+        images[imgIndex] = {
+          ...images[imgIndex],
+          image_url: reader.result,
+        }
+        variants[variantIndex] = { ...variants[variantIndex], images }
+        return { ...prev, variants }
+      })
+    }
+    reader.readAsDataURL(file)
+  }
 
   // Submit update product request
   const handleSave = async () => {
-    console.log("Saving product with data:", editForm);
+    console.log("Saving product with data:", editForm)
 
     try {
       // Update main product info
@@ -153,7 +164,7 @@ function AdminProducts() {
           // Add other product-level fields as needed
         },
         { withCredentials: true }
-      );
+      )
 
       // For each variant/color, update color info & images
       for (const color of editForm.variants) {
@@ -163,43 +174,44 @@ function AdminProducts() {
             color_name: color.color_name,
           },
           { withCredentials: true }
-        );
-        console.log(`Updated color id ${color.id}`);
+        )
+        console.log(`Updated color id ${color.id}`)
       }
 
-      alert("Product updated successfully.");
-      setEditingProduct(null);
+      alert("Product updated successfully.")
+      setEditingProduct(null)
 
       // Refresh product list
       const res = await axios.get("http://localhost:5000/api/products", {
         withCredentials: true,
-      });
-      setProducts(res.data);
+      })
+      setProducts(res.data)
     } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Failed to update product.");
+      console.error("Error updating product:", error)
+      alert("Failed to update product.")
     }
-  };
+  }
 
   // Cancel editing
   const handleCancel = () => {
-    setEditingProduct(null);
-  };
+    setEditingProduct(null)
+  }
 
   // Handle delete product
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return
     try {
       await axios.delete(`http://localhost:5000/api/products/${id}`, {
         withCredentials: true,
-      });
-      setProducts(products.filter((prod) => prod.id !== id));
-      console.log(`Product ${id} deleted.`);
+      })
+      setProducts(products.filter((prod) => prod.id !== id))
+      console.log(`Product ${id} deleted.`)
     } catch (error) {
-      console.error("Delete failed:", error);
-      alert("Failed to delete product.");
+      console.error("Delete failed:", error)
+      alert("Failed to delete product.")
     }
-  };
+  }
 
   // -----------------------
   // New handlers for Add Product modal below
@@ -211,117 +223,120 @@ function AdminProducts() {
       category_id: "",
       images: [],
       variants: [],
-    });
-    setShowAddModal(true);
-  };
+    })
+    setShowAddModal(true)
+  }
 
   const closeAddModal = () => {
-    setShowAddModal(false);
-  };
+    setShowAddModal(false)
+  }
 
   // Handle add form input change (name, category)
   const handleAddInputChange = (e) => {
-    const { name, value } = e.target;
-    setAddForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setAddForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   // Handle adding main images for new product
   const handleAddProductImageChange = (e) => {
-    const files = e.target.files;
-    if (!files.length) return;
+    const files = e.target.files
+    if (!files.length) return
 
     // We support multiple images
-    const fileArray = Array.from(files);
+    const fileArray = Array.from(files)
 
     Promise.all(
       fileArray.map(
         (file) =>
           new Promise((resolve) => {
-            const reader = new FileReader();
+            const reader = new FileReader()
             reader.onload = () => {
-              resolve({ image_url: reader.result });
-            };
-            reader.readAsDataURL(file);
+              resolve({ image_url: reader.result })
+            }
+            reader.readAsDataURL(file)
           })
       )
     ).then((images) => {
       setAddForm((prev) => ({
         ...prev,
         images: [...prev.images, ...images],
-      }));
-    });
-  };
+      }))
+    })
+  }
 
   // Add variant (color)
   const addVariant = () => {
     setAddForm((prev) => ({
       ...prev,
-      variants: [...prev.variants, { color_name: "", images: [], sizes: [] }],
-    }));
-  };
+      variants: [
+        ...prev.variants,
+        { color_name: "", images: [], sizes: [] },
+      ],
+    }))
+  }
 
   // Remove variant
   const removeVariant = (index) => {
     setAddForm((prev) => {
-      const variants = [...prev.variants];
-      variants.splice(index, 1);
-      return { ...prev, variants };
-    });
-  };
+      const variants = [...prev.variants]
+      variants.splice(index, 1)
+      return { ...prev, variants }
+    })
+  }
 
   // Handle variant color name change in add form
   const handleAddVariantColorChange = (index, value) => {
     setAddForm((prev) => {
-      const variants = [...prev.variants];
-      variants[index].color_name = value;
-      return { ...prev, variants };
-    });
-  };
+      const variants = [...prev.variants]
+      variants[index].color_name = value
+      return { ...prev, variants }
+    })
+  }
 
   // Handle variant images upload in add form
   const handleAddVariantImagesChange = (index, e) => {
-    const files = e.target.files;
-    if (!files.length) return;
+    const files = e.target.files
+    if (!files.length) return
 
-    const fileArray = Array.from(files);
+    const fileArray = Array.from(files)
 
     Promise.all(
       fileArray.map(
         (file) =>
           new Promise((resolve) => {
-            const reader = new FileReader();
+            const reader = new FileReader()
             reader.onload = () => {
-              resolve({ image_url: reader.result });
-            };
-            reader.readAsDataURL(file);
+              resolve({ image_url: reader.result })
+            }
+            reader.readAsDataURL(file)
           })
       )
     ).then((images) => {
       setAddForm((prev) => {
-        const variants = [...prev.variants];
-        variants[index].images = [...variants[index].images, ...images];
-        return { ...prev, variants };
-      });
-    });
-  };
+        const variants = [...prev.variants]
+        variants[index].images = [...variants[index].images, ...images]
+        return { ...prev, variants }
+      })
+    })
+  }
 
   // Remove variant image from add form
   const removeAddVariantImage = (variantIndex, imgIndex) => {
     setAddForm((prev) => {
-      const variants = [...prev.variants];
-      variants[variantIndex].images.splice(imgIndex, 1);
-      return { ...prev, variants };
-    });
-  };
+      const variants = [...prev.variants]
+      variants[variantIndex].images.splice(imgIndex, 1)
+      return { ...prev, variants }
+    })
+  }
 
   // Remove main product image from add form
   const removeAddProductImage = (imgIndex) => {
     setAddForm((prev) => {
-      const images = [...prev.images];
-      images.splice(imgIndex, 1);
-      return { ...prev, images };
-    });
-  };
+      const images = [...prev.images]
+      images.splice(imgIndex, 1)
+      return { ...prev, images }
+    })
+  }
 
   // Submit new product creation
   const handleAddSave = async () => {
@@ -334,10 +349,10 @@ function AdminProducts() {
           category_id: addForm.category_id,
         },
         { withCredentials: true }
-      );
+      )
 
-      const productId = resProduct.data.id;
-      console.log("Created product id:", productId);
+      const productId = resProduct.data.id
+      console.log("Created product id:", productId)
 
       // 2. Upload product images (assuming your backend supports batch upload or individual upload)
       for (const img of addForm.images) {
@@ -348,7 +363,7 @@ function AdminProducts() {
             image_url: img.image_url,
           },
           { withCredentials: true }
-        );
+        )
       }
 
       // 3. For each variant, create variant, upload variant images
@@ -361,8 +376,8 @@ function AdminProducts() {
             color_name: variant.color_name,
           },
           { withCredentials: true }
-        );
-        const colorId = resColor.data.id;
+        )
+        const colorId = resColor.data.id
 
         // Upload variant images
         for (const img of variant.images) {
@@ -373,25 +388,25 @@ function AdminProducts() {
               image_url: img.image_url,
             },
             { withCredentials: true }
-          );
+          )
         }
 
         // If you want to add sizes etc, you can extend here
       }
 
-      alert("Product added successfully!");
-      setShowAddModal(false);
+      alert("Product added successfully!")
+      setShowAddModal(false)
 
       // Refresh product list
       const res = await axios.get("http://localhost:5000/api/products", {
         withCredentials: true,
-      });
-      setProducts(res.data);
+      })
+      setProducts(res.data)
     } catch (error) {
-      console.error("Failed to add product:", error);
-      alert("Failed to add product.");
+      console.error("Failed to add product:", error)
+      alert("Failed to add product.")
     }
-  };
+  }
 
   return (
     <div className="admin-products">
@@ -412,7 +427,7 @@ function AdminProducts() {
                   <th>Name</th>
                   <th>Category ID</th>
                   <th>Stock</th>
-                  <th>Price Range</th>
+                  <th>Price</th>
                   <th>Variants</th>
                   <th>Actions</th>
                 </tr>
@@ -420,19 +435,30 @@ function AdminProducts() {
               <tbody>
                 {products.map((prod) => {
                   const allPrices =
-                    prod.variants?.flatMap((v) => v.sizes?.map((s) => s.price) || []) || [];
+                    prod.variants?.flatMap(
+                      (v) => v.sizes?.map((s) => s.price) || []
+                    ) || []
 
                   const allStock =
-                    prod.variants?.flatMap((v) => v.sizes?.map((s) => s.stock) || []) || [];
+                    prod.variants?.flatMap(
+                      (v) => v.sizes?.map((s) => s.stock) || []
+                    ) || []
 
-                  const minPrice = allPrices.length ? Math.min(...allPrices) : null;
-                  const maxPrice = allPrices.length ? Math.max(...allPrices) : null;
-                  const totalStock = allStock.reduce((sum, s) => sum + (s || 0), 0);
+                  const minPrice = allPrices.length
+                    ? Math.min(...allPrices)
+                    : null
+                  const maxPrice = allPrices.length
+                    ? Math.max(...allPrices)
+                    : null
+                  const totalStock = allStock.reduce(
+                    (sum, s) => sum + (s || 0),
+                    0
+                  )
 
                   const firstImage =
                     (prod.Images && prod.Images[0]?.image_url) ||
-                    (prod.ProductColors?.[0]?.Images?.[0]?.image_url) ||
-                    "https://placehold.co/100x100?text=No+Image";
+                    prod.ProductColors?.[0]?.Images?.[0]?.image_url ||
+                    "https://placehold.co/100x100?text=No+Image"
 
                   return (
                     <tr key={prod.id}>
@@ -445,33 +471,34 @@ function AdminProducts() {
                       </td>
                       <td>{prod.name || "Untitled"}</td>
                       <td>{prod.category_id || "N/A"}</td>
-                      <td>{totalStock}</td>
+                      <td>{prod.stock}</td>
+                      <td>${prod.price}</td>
                       <td>
-                        {minPrice !== null && maxPrice !== null
-                          ? `$${minPrice} - $${maxPrice}`
-                          : "N/A"}
+                        {prod.ProductColors?.length > 0
+                          ? prod.ProductColors.map((v, i) => (
+                              <div key={i}>
+                                {v.color_name || "No color"} (
+                                {v.Images?.length || 0} images)
+                              </div>
+                            ))
+                          : "No variants"}
                       </td>
                       <td>
-                        {prod.ProductColors?.length > 0 ? (
-                          prod.ProductColors.map((v, i) => (
-                            <div key={i}>
-                              {v.color_name || "No color"} ({v.Images?.length || 0} images)
-                            </div>
-                          ))
-                        ) : (
-                          "No variants"
-                        )}
-                      </td>
-                      <td>
-                        <button className="edit-btn" onClick={() => handleEdit(prod.id)}>
+                        <button
+                          className="edit-btn"
+                          onClick={() => handleEdit(prod.id)}
+                        >
                           Edit
                         </button>
-                        <button className="delete-btn" onClick={() => handleDelete(prod.id)}>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(prod.id)}
+                        >
                           Delete
                         </button>
                       </td>
                     </tr>
-                  );
+                  )
                 })}
               </tbody>
             </table>
@@ -510,12 +537,18 @@ function AdminProducts() {
                     <img
                       src={img.image_url}
                       alt={img.alt_text || ""}
-                      style={{ width: 80, height: 80, objectFit: "cover" }}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        objectFit: "cover",
+                      }}
                     />
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => handleEditProductImageChange(e, idx)}
+                      onChange={(e) =>
+                        handleEditProductImageChange(e, idx)
+                      }
                     />
                   </div>
                 ))}
@@ -529,8 +562,14 @@ function AdminProducts() {
                     Color Name:
                     <input
                       type="text"
-                      value={variant.color_name ?? ''}
-                      onChange={(e) => handleVariantChange(i, "color_name", e.target.value)}
+                      value={variant.color_name ?? ""}
+                      onChange={(e) =>
+                        handleVariantChange(
+                          i,
+                          "color_name",
+                          e.target.value
+                        )
+                      }
                     />
                   </label>
 
@@ -541,12 +580,18 @@ function AdminProducts() {
                         <img
                           src={img.image_url}
                           alt={img.alt_text || ""}
-                          style={{ width: 80, height: 80, objectFit: "cover" }}
+                          style={{
+                            width: 80,
+                            height: 80,
+                            objectFit: "cover",
+                          }}
                         />
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleEditVariantImageChange(i, idx, e)}
+                          onChange={(e) =>
+                            handleEditVariantImageChange(i, idx, e)
+                          }
                         />
                       </div>
                     ))}
@@ -568,14 +613,16 @@ function AdminProducts() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className="modal-overlay">
-      <div className="modal-content">
-      <button className="close-modal" onClick={closeAddModal}>×</button>
-      <AddProductForm />
+          <div className="modal-content">
+            <button className="close-modal" onClick={closeAddModal}>
+              ×
+            </button>
+            <AddProductForm />
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-    </div>
-  );
+  )
 }
 
-export default AdminProducts;
+export default AdminProducts

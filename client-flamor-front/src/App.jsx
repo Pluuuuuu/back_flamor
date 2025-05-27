@@ -1,38 +1,43 @@
 // src/App.jsx
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom"
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 
 // Pages
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import AboutUs from './pages/AboutUs';
-import ContactUs from './pages/ContactUs';
-import Cart from './pages/Cart';
-import Profile from './pages/Profile';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import AuthForm from './pages/AuthForm';
-import Product from './pages/Product';
-import CheckoutPage from './pages/CheckoutPage';
-import ProductDetails from './pages/ProductDetails';
-import Wishlist from './pages/Wishlist';
+import Home from "./pages/Home"
+import Shop from "./pages/Shop"
+import AboutUs from "./pages/AboutUs"
+import ContactUs from "./pages/ContactUs"
+import Cart from "./pages/Cart"
+import Profile from "./pages/Profile"
+import Login from "./pages/Login"
+import Signup from "./pages/Signup"
+import AuthForm from "./pages/AuthForm"
+import Product from "./pages/Product"
+import CheckoutPage from "./pages/CheckoutPage"
+import ProductDetails from "./pages/ProductDetails"
+import Wishlist from "./pages/Wishlist"
 
 
 // Admin Pages
-import AdminDashboard from './admin/AdminDashboard';
-import AdminOrders from './admin/AdminOrders';
-import AddProductForm from './admin/AddProductForm';
-import AdminUsers from './admin/AdminUsers';
-import AdminLayout from './components/AdminLayout';
-import AdminCategory from './admin/AdminCategory';
-import AdminProducts from './admin/AdminProducts';
+import AdminDashboard from "./admin/AdminDashboard"
+import AdminOrders from "./admin/AdminOrders"
+import AddProductForm from "./admin/AddProductForm"
+import AdminUsers from "./admin/AdminUsers"
+import AdminLayout from "./components/AdminLayout"
+import AdminCategory from "./admin/AdminCategory"
+import AdminProducts from "./admin/AdminProducts"
 
 // Layout-aware wrapper component
 function AppLayout() {
-  const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/Admin');
+  const location = useLocation()
+  const isAdminRoute = location.pathname.startsWith("/Admin")
 
   return (
     <>
@@ -53,7 +58,7 @@ function AppLayout() {
         <Route path="/product" element={<Product />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path='/wishlist' element={<Wishlist/>} />
+        <Route path="/wishlist" element={<Wishlist />} />
 
         {/* Admin Routes inside AdminLayout */}
         <Route
@@ -81,7 +86,7 @@ function AppLayout() {
           }
         />
         <Route
-          path="/AddProductForm"
+          path="/AdminAddProductForm"
           element={
             <AdminLayout>
               <AddProductForm />
@@ -104,7 +109,7 @@ function AppLayout() {
             </AdminLayout>
           }
         />
-         <Route
+        <Route
           path="/admin/profile"
           element={
             <AdminLayout>
@@ -112,13 +117,12 @@ function AppLayout() {
             </AdminLayout>
           }
         />
-
       </Routes>
 
       {/* Customer layout */}
       {!isAdminRoute && <Footer />}
     </>
-  );
+  )
 }
 
 export default function App() {
@@ -126,5 +130,5 @@ export default function App() {
     <Router>
       <AppLayout />
     </Router>
-  );
+  )
 }

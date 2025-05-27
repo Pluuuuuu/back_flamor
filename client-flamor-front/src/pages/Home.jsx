@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import ProductCard from "../components/ProductCard"
 import { Link } from "react-router-dom"
+import { fetchCategories } from "../api/categoryApi";
 
 export default function Home() {
   const [products, setProducts] = useState([])
@@ -42,6 +43,15 @@ export default function Home() {
         console.error(err)
       })
   }, [])
+
+  // Fetch categories
+useEffect(() => {
+  const loadCategories = async () => {
+    const data = await fetchCategories();
+    setCategories(data);
+  };
+  loadCategories();
+}, []);
 
   const showPopup = (message) => {
     setPopup({ message, visible: true })
@@ -126,18 +136,18 @@ export default function Home() {
         <p className="ellipse-txt rings">RINGS</p>
       </section>
 
-      <section className="categories-container">
-        <h2 className="categories-title">Shop by Category</h2>
-        <div className="categories-grid">
+      <section className="home-categories-container">
+        <h2 className="home-categories-title">Shop by Category</h2>
+        <div className="home-categories-grid">
           {categories.map((cat, index) => (
-            <div key={index} className="category-card">
+            <div key={index} className="home-category-card">
               <img src={cat.image} alt={cat.name} />
               <h3>{cat.name}</h3>
-              <p>{cat.description}</p>
             </div>
           ))}
         </div>
       </section>
+
 
       <section className="featured-container">
         <h2 className="featured-title">Featured Products</h2>
@@ -156,12 +166,12 @@ export default function Home() {
         )}
       </section>
 
-      <section class="fashion-banner">
-        <div class="fashion-banner-content">
-          <div class="fashion-banner-image">
+      <section className="fashion-banner">
+        <div className="fashion-banner-content">
+          <div className="fashion-banner-image">
             <img src={flourneck} alt="Fashion Model" />
           </div>
-          <div class="fashion-banner-text">
+          <div className="fashion-banner-text">
             <h1>FASHION</h1>
             <h2>Stylish</h2>
             <p>Beautiful, Fashionable, & Stylish</p>

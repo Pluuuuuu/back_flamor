@@ -1,111 +1,118 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const Checkout = ({ cartItems = [], total, onClearCart }) => {
-  const [formData, setFormData] = useState({
+const BASE_URL = "http://localhost:5000";
+import "../styles/checkout.css";
+
+const CheckoutPage = () => {
+  const [shippingInfo, setShippingInfo] = useState({
     full_name: "",
     phone: "",
     address: "",
     city: "",
-    country: "",
+    country: "Lebanon",
     postal_code: "",
   });
 
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [cartTotal, setCartTotal] = useState(0);
   const [message, setMessage] = useState("");
-  const [orderPlaced, setOrderPlaced] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const isPhoneValid = (phone) => /^\d+$/.test(phone);
+  useEffect(() => {
+    fetchCartTotal();
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const fetchCartTotal = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/cart`, {
+        withCredentials: true,
+      });
+      setCartTotal(res.data.total);
+    } catch (err) {
+      console.error("Error fetching cart total:", err);
+    }
   };
 
-  const handleSubmit = async () => {
-    if (!isPhoneValid(formData.phone)) {
-      return setMessage("Phone number must contain only digits.");
+  const handleChange = (e) => {
+    setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
+  };
+
+  const placeOrder = async () => {
+    const { full_name, phone, address, city, country, postal_code } =
+      shippingInfo;
+    if (!full_name || !phone || !address || !city || !country || !postal_code) {
+      setMessage("Please fill in all shipping information.");
+      return;
     }
 
-    if (cartItems.length === 0) {
-      return setMessage("Your cart is empty.");
-    }
-
-    setLoading(true);
     try {
-      // 1. Save shipping info
-      const shippingRes = await axios.post(
-        "http://localhost:5000/api/shipping",
-        formData,
-        { withCredentials: true }
-      );
+      // Save shipping info
+      const shippingRes = await axios.post(`${BASE_URL}/api/shipping`, shippingInfo, {
+        withCredentials: true,
+      });
+      const shipping = shippingRes.data.shipping;
 
-      const shipping_id = shippingRes.data.shipping?.id;
-      if (!shipping_id) throw new Error("Shipping ID not returned from server.");
+      // Place order
+      const orderPayload = {
+        shipping_id: shipping.id,
+        items: [], // You may need to fetch cart items here or pass them as props/context
+        payment_method: paymentMethod,
+      };
 
-      // 2. Prepare order items
-      const orderItems = cartItems.map((item) => ({
-        product_id: item.id,
-        quantity: item.quantity,
-      }));
+      await axios.post(`${BASE_URL}/api/orders`, orderPayload, { withCredentials: true });
 
-      // 3. Place the order
-      const orderRes = await axios.post(
-        "http://localhost:5000/api/orders",
-        { shipping_id, items: orderItems },
-        { withCredentials: true }
-      );
-
-      const { totalAmount } = orderRes.data;
-
-      let finalMsg = "Order placed! Delivery in 3–7 business days.";
-      if (totalAmount >= 125) finalMsg += " You got free delivery!";
-
-      setMessage(finalMsg);
-      setOrderPlaced(true);
-
-      // 4. Clear cart
-      if (onClearCart) onClearCart();
+      setMessage("✅ Order placed successfully!");
     } catch (err) {
-      console.error(err);
-      setMessage(
-        "Failed to place order: " + (err.response?.data?.message || err.message)
-      );
+      console.error("Error placing order:", err);
+      setMessage("❌ Failed to place order.");
     }
-    setLoading(false);
   };
 
   return (
-    <div className="checkout-form">
-      <h2>Delivery Information</h2>
+    <div className="checkout-page">
+      <h1>Checkout</h1>
 
-      <input name="full_name" placeholder="Full Name" onChange={handleChange} />
-      <input name="phone" placeholder="Phone Number" onChange={handleChange} />
-      <input name="address" placeholder="Address" onChange={handleChange} />
-      <input name="city" placeholder="City" onChange={handleChange} />
-      <input name="country" placeholder="Country" onChange={handleChange} />
-      <input name="postal_code" placeholder="Postal Code" onChange={handleChange} />
+      <h2>Shipping Information</h2>
+      <div className="shipping-form">
+        {["full_name", "phone", "address", "city", "postal_code"].map(
+          (field) => (
+            <input
+              key={field}
+              type="text"
+              name={field}
+              placeholder={field
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, (c) => c.toUpperCase())}
+              value={shippingInfo[field]}
+              onChange={handleChange}
+              required
+            />
+          )
+        )}
+      </div>
 
-      <h3>Payment Method</h3>
-      <label>
-        <input type="radio" checked disabled /> Cash on Delivery
-      </label>
+      <h2>Payment Method</h2>
+      <div className="payment-options">
+        <label>
+          <input
+            type="radio"
+            value="cod"
+            checked={paymentMethod === "cod"}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          Pay on Delivery
+        </label>
+      </div>
 
-      {!orderPlaced ? (
-        <button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Placing Order..." : "Place Order"}
-        </button>
-      ) : (
-        <button onClick={() => navigate("/orders")}>
-          View My Orders
-        </button>
-      )}
+      <h3>Total: ${cartTotal.toFixed(2)}</h3>
 
-      {message && <p>{message}</p>}
+      <button className="place-order-btn" onClick={placeOrder}>
+        Place Order
+      </button>
+
+      {message && <p className="order-message">{message}</p>}
     </div>
   );
 };
 
-export default Checkout;
+export default CheckoutPage;

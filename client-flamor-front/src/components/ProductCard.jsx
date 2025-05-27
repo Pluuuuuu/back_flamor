@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 import { Link } from "react-router-dom"
 import "./ProductCard.css"
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa"
 
 const ProductCard = ({ product, addToCart, addToWishlist }) => {
   const [inWishlist, setInWishlist] = useState(false)
@@ -10,14 +10,13 @@ const ProductCard = ({ product, addToCart, addToWishlist }) => {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/wishlist",
-          {
-            withCredentials: true,
-          }
-        )
-        const found = res.data.find(
-          (item) => item.product_id === product.id
+        const res = await axios.get("http://localhost:5000/api/wishlist", {
+          withCredentials: true,
+        })
+
+        const wishlist = res.data.items || []
+        const found = wishlist.find(
+          (item) => String(item.product_id) === String(product.id)
         )
         setInWishlist(!!found)
       } catch (err) {
@@ -27,25 +26,6 @@ const ProductCard = ({ product, addToCart, addToWishlist }) => {
 
     fetchWishlist()
   }, [product.id])
-
-  // const handleWishlistToggle = async () => {
-  //   try {
-  //     if (!inWishlist) {
-  //       await axios.post(
-  //         "http://localhost:5000/api/wishlist",
-  //         { product_id: product.id },
-  //         { withCredentials: true }
-  //       );
-  //     } else {
-  //       await axios.delete(`http://localhost:5000/api/wishlist/${product.id}`, {
-  //         withCredentials: true,
-  //       });
-  //     }
-  //     setInWishlist(!inWishlist);
-  //   } catch (err) {
-  //     console.error("Error updating wishlist:", err);
-  //   }
-  // };
 
   return (
     <div className="product-card">
@@ -60,8 +40,8 @@ const ProductCard = ({ product, addToCart, addToWishlist }) => {
           />
           <button
             onClick={(e) => {
-              e.preventDefault() // Prevents the link navigation
-              e.stopPropagation() // Stops the event from bubbling up to Link
+              e.preventDefault()
+              e.stopPropagation()
               addToCart(product.id)
             }}
             className="add-to-cart-btn"
@@ -75,13 +55,11 @@ const ProductCard = ({ product, addToCart, addToWishlist }) => {
       <h4>{product.description}</h4>
       <p>${product.price}</p>
 
-      {/* <button onClick={handleWishlistToggle} className="wishlist-btn"> */}
       <button
-        onClick={() => addToWishlist(product.id)}
+        onClick={() => addToWishlist(product.id, inWishlist, setInWishlist)}
         className="wishlist-btn"
       >
-        
-  {inWishlist ? <FaHeart color="red" size={24} /> : <FaRegHeart size={24} />}
+        {inWishlist ? <FaHeart color="red" size={24} /> : <FaRegHeart size={24} />}
       </button>
     </div>
   )
