@@ -142,7 +142,7 @@ const CartPage = () => {
               </div>
               <div className="row">
                 <span>Shipping</span>
-                <span>Gratis</span>
+                <span>0 $</span>
               </div>
               <div className="row total">
                 <strong>Total amount (including VAT)</strong>
