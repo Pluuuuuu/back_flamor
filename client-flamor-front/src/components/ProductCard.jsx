@@ -65,7 +65,7 @@ const ProductCard = ({ product }) => {
   const handleAddToWishlist = async (e) => {
     e.stopPropagation();
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("/AuthForm");
       return;
     }
     if (addingToWishlist) return;

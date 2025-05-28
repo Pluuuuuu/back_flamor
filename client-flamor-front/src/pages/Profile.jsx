@@ -15,7 +15,7 @@ const Profile = () => {
 
   useEffect(() => {
     axiosInstance
-      .get("/users/me")
+      .get("/api/users/me")
       .then((res) => {
         setUser(res.data);
         setFormData({ name: res.data.name, email: res.data.email });

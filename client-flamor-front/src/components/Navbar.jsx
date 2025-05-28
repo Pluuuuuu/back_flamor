@@ -11,9 +11,9 @@ const Navbar = () => {
     <nav className="top-banner-nav">
       <img id="logo" src={logo} alt="Logo" />
       <div id="top-banner-right">
-        <Link
-          styles={{
-            textDecoration: "none",
+      <Link
+      style={{
+        textDecoration: "none",
             cursor: "pointer",
           }}
           className="link"
@@ -23,7 +23,7 @@ const Navbar = () => {
           Home
         </Link>
         <Link
-          styles={{
+          style={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -34,7 +34,7 @@ const Navbar = () => {
           Shop
         </Link>
         <Link
-          styles={{
+          style={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -45,7 +45,7 @@ const Navbar = () => {
           About Us
         </Link>
         <Link
-          styles={{
+          style={{
             textDecoration: "none",
             cursor: "pointer",
           }}

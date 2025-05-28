@@ -1,216 +1,48 @@
-.admin-products {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.admin-products h2 {
-  margin-bottom: 20px;
-}
-
-.add-product-button {
-  background-color: #594548;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.add-product-button:hover {
-  background-color: #3d302f;
-}
-
-.product-table {
+.data-grid-container {
+  background-color: white !important;
+  color: black;
   width: 100%;
-  border-collapse: collapse;
+  overflow-x: auto;
 }
 
-.product-table th,
-.product-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
-}
-
-.product-table th {
-  background-color: #f2e0df;
-}
-
-.product-img {
-  width: 60px;
-  height: auto;
-  border-radius: 4px;
-}
-
-.edit-btn,
-.delete-btn {
-  padding: 5px 10px;
-  margin-right: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.edit-btn {
-  background-color: #D991A4;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #F2B3BF;
+.data-grid-container .rdg-row:nth-child(odd) {
+  background-color: white;
   color: black;
 }
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+
+.data-grid-container .rdg-row:nth-child(even) {
+  background-color: #f0f0f0; /* light grey */
+  color: black;
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  max-height: 90vh;
-  overflow-y: auto;
-  width: 600px;
-  border-radius: 8px;
+.data-grid-container .rdg-row:hover {
+  background-color: #d0d0d0; /* darker grey on hover */
+  color: black;
 }
 
-.image-preview-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-.image-preview {
-  position: relative;
+/* Responsive styles */
+@media (max-width: 768px) {
+  .data-grid-container {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
 }
 
-.image-preview img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
-}
+@media (max-width: 480px) {
+  .data-grid-container {
+    font-size: 0.8rem;
+  }
 
-.image-preview button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: red;
-  border: none;
-  color: white;
-  border-radius: 0 4px 0 4px;
-  cursor: pointer;
-}
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup-content {
-  background: white;
-  padding: 20px;
-  border-radius: 6px;
-  width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.variant-section {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-}
-
-.variant-images-list {
-  display: flex;
-  gap: 8px;
-  margin-top: 5px;
-}
-
-.variant-image-item {
-  position: relative;
-}
-
-.variant-image-item button {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: red;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-.variant-size-input input {
-  width: 70px;
-  margin-right: 6px;
-}
-.close-modal {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  position: relative;
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 8px;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.close-modal {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-  transition: color 0.3s ease;
-}
-
-.close-modal:hover {
-  color: white;
+  h1 {
+    font-size: 1.2rem;
+  }
 }
