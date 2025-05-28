@@ -3,28 +3,28 @@
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  background-color: #fff;
+  overflow: hidden;
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .product-card h3 {
   font-size: 1.5rem;
-  margin: 1rem 0;
-  color: #000;/*828282*/
-}
-
-.product-card h4 {
-  font-size: 1.2rem;
-  margin: 1rem 0;
-  color: #828282;
-  white-space: normal; /* Allows wrapping */
-  word-wrap: break-word; /* Break long words if needed */
-  overflow-wrap: break-word; /* Modern equivalent */
+  margin: 1rem 0 0.5rem;
+  color: #000;
 }
 
 .product-card p {
   font-size: 1.2rem;
   color: #000;
+  margin: 0 0 1rem;
 }
-
 
 .image-wrapper {
   position: relative;
@@ -36,10 +36,12 @@
 .image-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  display: block;
+  background-color: #F2F2F2;
 }
 
-/* Button inside image */
+/* Add-to-cart button */
 .image-wrapper .add-to-cart-btn {
   position: absolute;
   bottom: 0;
@@ -51,8 +53,6 @@
   color: white;
   cursor: pointer;
   opacity: 0;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
   transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
@@ -64,7 +64,8 @@
   background-color: #d98cad;
 }
 
-/* Wishlist heart button */
+/* Wishlist button */
+.favorite-btn,
 .wishlist-btn {
   position: absolute;
   top: 24px;
@@ -74,8 +75,21 @@
   font-size: 1.5rem;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
+  color: #e79fbf;
 }
 
+.favorite-btn:hover,
 .wishlist-btn:hover {
   transform: scale(1.4);
 }
+
+/* Remove default button styles */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+

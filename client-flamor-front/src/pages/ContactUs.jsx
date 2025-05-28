@@ -1,13 +1,20 @@
 import React from 'react';
-import '../styles/ContactUs.css'; // we'll create this next
-import Button from '../components/Button'
+import '../styles/ContactUs.css';
+import Button from '../components/Button';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ContactUs = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    toast.info('This feature is still under construction.');
+  };
+
   return (
     <div className="contact-page">
       <div className="contact-container">
         <h1 className="contact-title">CONTACT <span>US</span></h1>
-        <form className="contact-form">
+        <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
               <label>First name</label>

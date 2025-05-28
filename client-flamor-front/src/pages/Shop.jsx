@@ -200,153 +200,150 @@ const Shop = () => {
   };
 
   return (
-    <div className="container-shop">
-      {/* Sidebar */}
-      <aside className="sidebar_shop">
-        <h2>
-          Our Categories
-          {/* Toggle button for phones */}
-          <button
-            className="category-toggle-button"
-            aria-expanded={categoryMenuOpen}
-            aria-controls="category-list"
-            onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
-            aria-label={categoryMenuOpen ? "Collapse categories" : "Expand categories"}
-          >
-            {categoryMenuOpen ? <X size={20} /> : <ChevronDown size={20} />}
-          </button>
-        </h2>
-        <ul
-          id="category-list"
-          className={`shop-category-list ${
-            categoryMenuOpen ? "open" : "closed"
-          }`}
+  <div className="container-shop">
+    {/* Sidebar */}
+    <aside className="sidebar_shop">
+      <h2>
+        Our Categories
+        {/* Toggle button for phones */}
+        <button
+          className="category-toggle-button"
+          aria-expanded={categoryMenuOpen}
+          aria-controls="category-list"
+          onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
+          aria-label={categoryMenuOpen ? "Collapse categories" : "Expand categories"}
         >
-          {categories.map((cat) => (
-            <li
-              key={cat.id}
-              className={`shop-category-item ${
-                filters.categoryId === cat.id ? "selected" : ""
-              }`}
-              onClick={() => {
-                setFilters((prev) => ({
-                  ...prev,
-                  categoryId: prev.categoryId === cat.id ? null : cat.id,
-                }));
-                navigate(
-                  (prev) =>
-                    `/shop?category=${prev.categoryId === cat.id ? "" : cat.id}`
-                );
-              }}
-            >
-              {cat.name}
-            </li>
-          ))}
-        </ul>
-        <div className="price-range">
-          <label>
-            Price Range: ${filters.minPrice} - ${filters.maxPrice}
-          </label>
-          <Slider
-            range
-            min={0}
-            max={1000}
-            value={[filters.minPrice, filters.maxPrice]}
-            onChange={([min, max]) =>
-              setFilters((prev) => ({ ...prev, minPrice: min, maxPrice: max }))
-            }
-          />
-        </div>
+          {categoryMenuOpen ? <X size={20} /> : <ChevronDown size={20} />}
+        </button>
+      </h2>
 
-        {/* Search Input */}
-        <div className="shop-search-bar">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="shop-search-bar-input"
-          />
-          <Search
-            size={20}
-            className="shop-search-bar-icon"
-            onClick={handleSearchIconClick}
-          />
-        </div>
-
-        {/* sort controller */}
-        <div className="sort-controls">
-          <label htmlFor="sortBy">Sort By:</label>
-          <select
-            id="sortBy"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+      {/* Category List */}
+      <ul
+        id="category-list"
+        className={`shop-category-list ${categoryMenuOpen ? "open" : "closed"}`}
+      >
+        {categories.map((cat) => (
+          <li
+            key={cat.id}
+            className={`shop-category-item ${filters.categoryId === cat.id ? "selected" : ""}`}
+            onClick={() => {
+              setFilters((prev) => ({
+                ...prev,
+                categoryId: prev.categoryId === cat.id ? null : cat.id,
+              }));
+              navigate(`/shop?category=${filters.categoryId === cat.id ? "" : cat.id}`);
+            }}
           >
-            <option value="name">Name</option>
-            <option value="price">Price</option>
-          </select>
-          <select
-            id="sortOrder"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-          >
-            <option value="ASC">Ascending</option>
-            <option value="DESC">Descending</option>
-          </select>
-        </div>
-      </aside>
+            {cat.name}
+          </li>
+        ))}
+      </ul>
 
-      {/* Product Grid */}
-      <div className="products-section">
-        <main className="product-grid">
-          {loadingProducts ? (
-            <div className="loading-products">Loading products...</div>
-          ) : products.length === 0 ? (
-            <div className="no-products">
-              No products found. Try adjusting your filters.
-            </div>
-          ) : (
-            products.map((product) => {
-              const imageUrl =
-                product.image_url ||
-                (product.Images?.length > 0 && product.Images[0].image_url) ||
-                "";
-              const altText =
-                product.alt_text ||
-                (product.Images?.length > 0 && product.Images[0].alt_text) ||
-                product.name;
+      {/* Price Range Slider */}
+      <div className="price-range">
+        <label>Price Range: ${filters.minPrice} - ${filters.maxPrice}</label>
+        <Slider
+          range
+          min={0}
+          max={1000}
+          value={[filters.minPrice, filters.maxPrice]}
+          onChange={([min, max]) =>
+            setFilters((prev) => ({ ...prev, minPrice: min, maxPrice: max }))
+          }
+        />
+      </div>
 
-              return (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  imageUrl={getImageUrl(imageUrl)}
-                  altText={altText}
-                  onAddToCart={handleAddToCart}
-                  onAddToWishlist={handleAddToWishlist}
-                />
-              );
-            })
-          )}
-        </main>
+      {/* Search Bar */}
+      <div className="shop-search-bar">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="shop-search-bar-input"
+        />
+        <Search
+          size={20}
+          className="shop-search-bar-icon"
+          onClick={handleSearchIconClick}
+        />
+      </div>
 
-        {/* Pagination Controls */}
-        <div className="pagination-controls">
-          <button onClick={handlePrevPage} disabled={page === 1}>
-            Previous
-          </button>
-          <span>Page {page}</span>
-          <button onClick={handleNextPage} disabled={page === totalPages}>
-            Next
-          </button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-        </div>
+      {/* Sort Controls */}
+      <div className="sort-controls">
+        <label htmlFor="sortBy">Sort By:</label>
+        <select
+          id="sortBy"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+        </select>
+
+        <select
+          id="sortOrder"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
+          <option value="ASC">Ascending</option>
+          <option value="DESC">Descending</option>
+        </select>
+      </div>
+    </aside>
+
+    {/* Product Grid */}
+    <div className="products-section">
+      <main className="product-grid">
+        {loadingProducts ? (
+          <div className="loading-products">Loading products...</div>
+        ) : products.length === 0 ? (
+          <div className="no-products">
+            No products found. Try adjusting your filters.
+          </div>
+        ) : (
+          products.map((product) => {
+            const imageUrl =
+              product.image_url ||
+              (product.Images?.length > 0 && product.Images[0].image_url) ||
+              "";
+            const altText =
+              product.alt_text ||
+              (product.Images?.length > 0 && product.Images[0].alt_text) ||
+              product.name;
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                imageUrl={getImageUrl(imageUrl)}
+                altText={altText}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+              />
+            );
+          })
+        )}
+      </main>
+
+      {/* Pagination Controls */}
+      <div className="pagination-controls">
+        <button onClick={handlePrevPage} disabled={page === 1}>
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={handleNextPage} disabled={page === totalPages}>
+          Next
+        </button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Shop;

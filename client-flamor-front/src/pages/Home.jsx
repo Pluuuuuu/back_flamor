@@ -156,7 +156,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="featured-container">
+      {/* <section className="featured-container">
         <h2 className="featured-title">Featured Products</h2>
         <div className="featured-grid">
           {Array.isArray(products) &&
@@ -168,7 +168,7 @@ export default function Home() {
                 addToWishlist={handleAddToWishlist}
               />
             ))}
-        </div>
+        </div> */}
         {popup.visible && (
           <div className="popup-notification">{popup.message}</div>
         )}
