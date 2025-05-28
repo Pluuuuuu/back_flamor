@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Button from "../components/Button";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import ProductCard from "../components/ProductCard";
 import { Link } from "react-router-dom";
 import { fetchCategories } from "../api/categoryApi";
@@ -21,7 +21,7 @@ export default function Home() {
 
   // Fetch user role
   useEffect(() => {
-    axios
+    axiosInstance
       .get("http://localhost:5000/api/users/me", {
         withCredentials: true,
       })
@@ -38,7 +38,7 @@ export default function Home() {
 
   // Fetch all products with safety check
   useEffect(() => {
-    axios
+    axiosInstance
       .get("http://localhost:5000/api/products")
       .then((res) => {
         if (Array.isArray(res.data)) {
@@ -77,7 +77,7 @@ export default function Home() {
       return;
     }
 
-    axios
+    axiosInstance
       .post(
         "http://localhost:5000/api/cart/add",
         {
@@ -102,13 +102,13 @@ export default function Home() {
     }
     try {
       if (!inWishlist) {
-        await axios.post(
+        await axiosInstance.post(
           "http://localhost:5000/api/wishlist",
           { product_id: productId },
           { withCredentials: true }
         );
       } else {
-        await axios.delete(
+        await axiosInstance.delete(
           `http://localhost:5000/api/wishlist/${productId}`,
           { withCredentials: true }
         );

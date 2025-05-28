@@ -3,7 +3,7 @@
   padding: 2rem;
 }
 
-/* Shop header styling */
+/* Shop header styles */
 .shop-header {
   background-color: #f2b3bf;
   width: 100%;
@@ -29,7 +29,7 @@
   margin-top: -2rem;
 }
 
-/* Product grid styling */
+/* Product grid styles */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjusts automatically */

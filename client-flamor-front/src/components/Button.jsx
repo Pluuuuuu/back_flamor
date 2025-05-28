@@ -1,5 +1,5 @@
 import React from "react"
-import "./Button.css" // Optional: for styling
+import "./Button.css" // Optional: for styles
 
 const Button = ({
   children,
@@ -11,7 +11,7 @@ const Button = ({
     <button
       id="Btn"
       className={className}
-      style={{ backgroundColor: backgroundColor, color: color }}
+      styles={{ backgroundColor: backgroundColor, color: color }}
     >
       {children}
     </button>

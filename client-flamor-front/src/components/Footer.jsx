@@ -1,6 +1,6 @@
 import React from "react"
 import logo from "../assets/logo.png"
-import "./Footer.css" // Optional: for styling
+import "./Footer.css" // Optional: for styles
 import { Link } from "react-router-dom"
 import {
   FaFacebook,
@@ -15,7 +15,7 @@ const Footer = () => {
       <img id="logo" src={logo} alt="Logo" />
       <div id="footer-middle">
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -25,7 +25,7 @@ const Footer = () => {
           Home
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -35,7 +35,7 @@ const Footer = () => {
           Shop
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -45,7 +45,7 @@ const Footer = () => {
           About Us
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}

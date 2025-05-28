@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Profile.css";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -12,12 +12,6 @@ const Profile = () => {
   );
 
   const navigate = useNavigate();
-
-  // ✅ Fixed: baseURL should NOT include /login
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000/api",
-    withCredentials: true,
-  });
 
   useEffect(() => {
     axiosInstance
@@ -40,7 +34,7 @@ const Profile = () => {
     if (!formData[field].trim()) return;
 
     try {
-      const response = await axiosInstance.put("/users/me", {
+      const response = await axiosInstance.put("/api/users/me", {
         [field]: formData[field],
       });
       setUser(response.data);
@@ -64,7 +58,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/api/auth/logout");
       localStorage.removeItem("profilePic");
       navigate("/AuthForm");
     } catch (err) {

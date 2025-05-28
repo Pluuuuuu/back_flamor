@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import CategoryCard from "../components/CategoryCard";
 import "../adminstyle/AdminCategory.css";
 
@@ -11,12 +11,12 @@ const AdminCategories = () => {
   const [fileInputKey, setFileInputKey] = useState(Date.now());
 
   useEffect(() => {
-    fetchCategories();
+    fetchAllCategories();
   }, []);
 
-  const fetchCategories = async () => {
+  const fetchAllCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/categories", {
+      const res = await axiosInstance.get("http://localhost:5000/api/categories", {
         withCredentials: true,
       });
       setCategories(res.data);
@@ -37,7 +37,7 @@ const AdminCategories = () => {
       formData.append("name", name);
       formData.append("files", imageFile);
 
-      await axios.post("http://localhost:5000/api/categories", formData, {
+      await axiosInstance.post("http://localhost:5000/api/categories", formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -46,7 +46,7 @@ const AdminCategories = () => {
       setName("");
       setImageFile(null);
       setFileInputKey(Date.now());
-      fetchCategories();
+      fetchAllCategories();
     } catch (err) {
       console.error("Failed to add category", err);
 
@@ -68,10 +68,10 @@ const AdminCategories = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`, {
+      await axiosInstance.delete(`http://localhost:5000/api/categories/${id}`, {
         withCredentials: true,
       });
-      fetchCategories();
+      fetchAllCategories();
     } catch (err) {
       console.error("Failed to delete category", err);
       alert("Error deleting category");
@@ -118,7 +118,7 @@ const AdminCategories = () => {
             key={cat.id}
             category={cat}
             onDelete={handleDelete}
-            onUpdate={fetchCategories}
+            onUpdate={fetchAllCategories}
           />
         ))}
       </div>

@@ -1,51 +1,54 @@
 // src/App.jsx
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom"
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
+import './App.css';
+
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
+
+// Lazy load components
+const Navbar = lazy(() => import('./components/Navbar'));
+const Footer = lazy(() => import('./components/Footer'));
 
 // Pages
-import Home from "./pages/Home"
-import Shop from "./pages/Shop"
-import AboutUs from "./pages/AboutUs"
-import ContactUs from "./pages/ContactUs"
-import Cart from "./pages/Cart"
-import Profile from "./pages/Profile"
-import Login from "./pages/Login"
-import Signup from "./pages/Signup"
-import AuthForm from "./pages/AuthForm"
-import Product from "./pages/Product"
-import CheckoutPage from "./pages/CheckoutPage"
-import ProductDetails from "./pages/ProductDetails"
-import Wishlist from "./pages/Wishlist"
-
+const Home = lazy(() => import('./pages/Home'));
+const Shop = lazy(() => import('./pages/Shop'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
+const ContactUs = lazy(() => import('./pages/ContactUs'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const AuthForm = lazy(() => import('./pages/AuthForm'));
+const Product = lazy(() => import('./pages/Product'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
+const Wishlist = lazy(() => import('./pages/Wishlist'));
 
 // Admin Pages
-import AdminDashboard from "./admin/AdminDashboard"
-import AdminOrders from "./admin/AdminOrders"
-import AddProductForm from "./admin/AddProductForm"
-import AdminUsers from "./admin/AdminUsers"
-import AdminLayout from "./components/AdminLayout"
-import AdminCategory from "./admin/AdminCategory"
-import AdminProducts from "./admin/AdminProducts"
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
+const AdminOrders = lazy(() => import('./admin/AdminOrders'));
+const AddProductForm = lazy(() => import('./admin/AddProductForm'));
+const AdminUsers = lazy(() => import('./admin/AdminUsers'));
+const AdminCategory = lazy(() => import('./admin/AdminCategory'));
+const AdminProducts = lazy(() => import('./admin/AdminProducts'));
+const AdminLayout = lazy(() => import('./components/AdminLayout'));
 
-// Layout-aware wrapper component
+// Layout-aware component
 function AppLayout() {
-  const location = useLocation()
-  const isAdminRoute = location.pathname.startsWith("/Admin")
+  const location = useLocation();
+  const isAdminRoute = location.pathname.toLowerCase().startsWith('/admin');
 
   return (
     <>
-      {/* Customer layout */}
       {!isAdminRoute && <Navbar />}
 
       <Routes>
-        {/* Customer-Facing Routes */}
+        {/* Customer Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/about" element={<AboutUs />} />
@@ -54,81 +57,62 @@ function AppLayout() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/AuthForm" element={<AuthForm />} />
+        <Route path="/authform" element={<AuthForm />} />
         <Route path="/product" element={<Product />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/wishlist" element={<Wishlist />} />
 
-        {/* Admin Routes inside AdminLayout */}
+        {/* Admin Routes */}
         <Route
-          path="/AdminDashboard"
-          element={
-            <AdminLayout>
-              <AdminDashboard />
-            </AdminLayout>
-          }
+          path="/adminDashboard"
+          element={<AdminLayout><AdminDashboard /></AdminLayout>}
         />
         <Route
-          path="/AdminUsers"
-          element={
-            <AdminLayout>
-              <AdminUsers />
-            </AdminLayout>
-          }
+          path="/adminUsers"
+          element={<AdminLayout><AdminUsers /></AdminLayout>}
         />
         <Route
-          path="/AdminOrders"
-          element={
-            <AdminLayout>
-              <AdminOrders />
-            </AdminLayout>
-          }
+          path="/adminOrders"
+          element={<AdminLayout><AdminOrders /></AdminLayout>}
         />
         <Route
-          path="/AdminAddProductForm"
-          element={
-            <AdminLayout>
-              <AddProductForm />
-            </AdminLayout>
-          }
+          path="/adminAddProductForm"
+          element={<AdminLayout><AddProductForm /></AdminLayout>}
         />
         <Route
-          path="/AdminProducts"
-          element={
-            <AdminLayout>
-              <AdminProducts />
-            </AdminLayout>
-          }
+          path="/adminProducts"
+          element={<AdminLayout><AdminProducts /></AdminLayout>}
         />
         <Route
-          path="/AdminCategory"
-          element={
-            <AdminLayout>
-              <AdminCategory />
-            </AdminLayout>
-          }
+          path="/adminCategory"
+          element={<AdminLayout><AdminCategory /></AdminLayout>}
         />
         <Route
           path="/admin/profile"
-          element={
-            <AdminLayout>
-              <Profile />
-            </AdminLayout>
-          }
+          element={<AdminLayout><Profile /></AdminLayout>}
         />
       </Routes>
 
-      {/* Customer layout */}
       {!isAdminRoute && <Footer />}
     </>
-  )
+  );
 }
 
+// Main App
 export default function App() {
   return (
     <Router>
-      <AppLayout />
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <AppLayout />
+              <ToastContainer />
+            </Suspense>
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
     </Router>
-  )
+  );
 }

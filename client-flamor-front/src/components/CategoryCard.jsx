@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import "../adminstyle/AdminCategoryCard.css";
 
 const CategoryCard = ({ category, onDelete, onUpdate }) => {
@@ -34,7 +34,7 @@ const CategoryCard = ({ category, onDelete, onUpdate }) => {
         console.log(pair[0], pair[1]);
       }
 
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `http://localhost:5000/api/categories/${category.id}`,
         formData,
         {

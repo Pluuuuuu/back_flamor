@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";;
 import { useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import products from "../assets/products.json";
@@ -22,7 +22,7 @@ const Product = () => {
   // Check login by trying to fetch wishlist (or any protected route)
   const checkLoginStatus = async () => {
     try {
-      await axios.get("http://localhost:5000/api/wishlist", {
+      await axiosInstance.get("http://localhost:5000/api/wishlist", {
         withCredentials: true,
       });
       setIsLoggedIn(true);
@@ -40,7 +40,7 @@ const Product = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(
+        const res = await axiosInstance.get(
           `http://localhost:5000/api/reviews/product/${id}`,
           { withCredentials: true }
         );
@@ -52,7 +52,7 @@ const Product = () => {
 
     const checkWishlist = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/wishlist", {
+        const res = await axiosInstance.get("http://localhost:5000/api/wishlist", {
           withCredentials: true,
         });
         const found = res.data.find(
@@ -82,13 +82,13 @@ const Product = () => {
     try {
       if (inWishlist) {
         // Remove from wishlist
-        await axios.delete(`http://localhost:5000/api/wishlist/${id}`, {
+        await axiosInstance.delete(`http://localhost:5000/api/wishlist/${id}`, {
           withCredentials: true,
         });
         setInWishlist(false);
       } else {
         // Add to wishlist
-        await axios.post(
+        await axiosInstance.post(
           "http://localhost:5000/api/wishlist",
           { productId: id },
           { withCredentials: true }
@@ -114,14 +114,14 @@ const Product = () => {
     setAddingReview(true);
 
     try {
-      await axios.post(
+      await axiosInstance.post(
         "http://localhost:5000/api/reviews/add",
         { productId: id, text: reviewText },
         { withCredentials: true }
       );
       setReviewText("");
       // Refresh reviews after submit
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         `http://localhost:5000/api/reviews/product/${id}`,
         { withCredentials: true }
       );
@@ -151,7 +151,7 @@ const Product = () => {
           <button className="add-to-cart" onClick={addToCart}>
             Add to cart
           </button>
-          <button onClick={toggleWishlist} style={{ marginLeft: 10 }}>
+          <button onClick={toggleWishlist} styles={{ marginLeft: 10 }}>
             {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
           </button>
           <p className="fine-print">Additional product details or fine print here.</p>
@@ -183,7 +183,7 @@ const Product = () => {
                 <p>No reviews yet.</p>
               ) : (
                 reviews.map((r) => (
-                  <div key={r.id} style={{ borderBottom: "1px solid #ccc", marginBottom: 8 }}>
+                  <div key={r.id} styles={{ borderBottom: "1px solid #ccc", marginBottom: 8 }}>
                     <p><b>{r.userName || "Anonymous"}</b></p>
                     <p>{r.text}</p>
                   </div>
@@ -191,16 +191,16 @@ const Product = () => {
               )}
 
               {isLoggedIn ? (
-                <div style={{ marginTop: 20 }}>
+                <div styles={{ marginTop: 20 }}>
                   <h4>Add a review</h4>
                   <textarea
                     rows={3}
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
                     placeholder="Write your review here..."
-                    style={{ width: "100%" }}
+                    styles={{ width: "100%" }}
                   />
-                  {reviewError && <p style={{ color: "red" }}>{reviewError}</p>}
+                  {reviewError && <p styles={{ color: "red" }}>{reviewError}</p>}
                   <button onClick={submitReview} disabled={addingReview}>
                     {addingReview ? "Submitting..." : "Submit Review"}
                   </button>
@@ -213,7 +213,7 @@ const Product = () => {
         </div>
       </div>
 
-      <div className="grid" style={{ marginTop: 30 }}>
+      <div className="grid" styles={{ marginTop: 30 }}>
         <h3>More products</h3>
         {products
           .filter((p) => p.id !== product.id)

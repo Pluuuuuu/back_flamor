@@ -1,14 +1,8 @@
 import { useRef, useState, useEffect } from "react"
-import axios from "axios"
+import axiosInstance from "../api/axiosInstance"
 import { useNavigate } from "react-router-dom"
 import "../styles/AuthForm.css"
 import { FaEye, FaEyeSlash } from "react-icons/fa"
-
-// Axios instance configured for cookie-based auth
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api",
-  withCredentials: true, // send cookies on requests
-})
 
 const AuthForm = () => {
   const loginRef = useRef(null)
@@ -19,12 +13,11 @@ const AuthForm = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axiosInstance.get("auth/profile")
+        const res = await axiosInstance.get("/api/auth/profile")
         if (res.data?.user) {
           const user = res.data.user
-          // Redirect based on role
           if (user.role === "admin") {
-            navigate("/AdminDashboard") // fixed route
+            navigate("/AdminDashboard")
           } else {
             navigate("/profile")
           }
@@ -36,7 +29,6 @@ const AuthForm = () => {
     checkAuth()
   }, [navigate])
 
-  // UI state
   const [screen, setscreen] = useState("signup")
   const [signupData, setSignupData] = useState({
     name: "",
@@ -53,11 +45,9 @@ const AuthForm = () => {
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
 
-  // Password visibility toggles
   const [showPasswordSignup, setShowPasswordSignup] = useState(false)
   const [showPasswordLogin, setShowPasswordLogin] = useState(false)
 
-  // Handle UI screen toggle between login/signup
   const handleLoginClick = () => {
     if (screen === "signup") {
       setscreen("login")
@@ -84,7 +74,6 @@ const AuthForm = () => {
     }
   }
 
-  // Handle user signup
   const handleSignup = async () => {
     try {
       setError("")
@@ -95,28 +84,23 @@ const AuthForm = () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
 
-      // Validate email
       if (!emailRegex.test(email)) {
         setError("Invalid email format.")
         return
       }
 
-      // Validate password strength
       if (!passwordRegex.test(password)) {
         setError("Password must be 8+ characters with uppercase, lowercase, number, and symbol.")
         return
       }
 
-      // Send signup request
-      const res = await axiosInstance.post("/auth/signup", {
+      const res = await axiosInstance.post("/api/auth/signup", {
         ...signupData,
-        role: "customer", // default signup role
+        role: "customer",
       })
 
       setSuccess(res.data.message)
       setSignupData({ name: "", email: "", password: "" })
-
-      // Auto-switch to login form
       handleLoginClick()
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed")
@@ -125,7 +109,6 @@ const AuthForm = () => {
     }
   }
 
-  // Handle user login
   const handleLogin = async () => {
     try {
       setError("")
@@ -140,20 +123,17 @@ const AuthForm = () => {
         return
       }
 
-      // Send login request
-      const res = await axiosInstance.post("/auth/login", loginData)
+      const res = await axiosInstance.post("/api/auth/login", loginData)
 
-      // Optionally store token if remember me is checked
       if (rememberMe) {
         localStorage.setItem("token", res.data.token)
       }
 
       setSuccess(res.data.message)
 
-      // Redirect based on role
       const { user } = res.data
       if (user.role === "admin") {
-        navigate("/AdminDashboard") // redirect to AdminDashboard
+        navigate("/AdminDashboard")
       } else {
         navigate("/profile")
       }
@@ -167,11 +147,9 @@ const AuthForm = () => {
   return (
     <div className="form-wrapper">
       <div className="form-structor">
-        {/* Toast messages */}
         {error && <div className="toast error">{error}</div>}
         {success && <div className="toast success">{success}</div>}
 
-        {/* Signup Form */}
         <div className="signup" ref={signupRef}>
           <h2 className="form-title" id="signup" onClick={handleSignupClick}>
             <span>or</span>Sign up
@@ -214,7 +192,6 @@ const AuthForm = () => {
           </button>
         </div>
 
-        {/* Login Form */}
         <div className="login slide-up">
           <div className="center" ref={loginRef}>
             <h2 className="form-title" id="login" onClick={handleLoginClick}>
@@ -265,4 +242,3 @@ const AuthForm = () => {
 }
 
 export default AuthForm
- 

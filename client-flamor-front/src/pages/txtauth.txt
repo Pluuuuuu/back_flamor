@@ -4,7 +4,7 @@
 //enforce a strong password policy
 
 // import { useRef, useState } from "react";
-// import axios from "axios";
+// import axiosInstance from "../api/axiosInstance";;
 // import { useNavigate } from "react-router-dom";
 // import "../styles/AuthForm.css";
 
@@ -49,7 +49,7 @@
 //     }
 //   };
 
-//   const axiosInstance = axios.create({
+//   const axiosInstance = axiosInstance.create({
 //     baseURL: "http://localhost:5000/api",
 //     withCredentials: true,
 //   });
@@ -111,9 +111,9 @@
 
 //   return (
 //     <div className="form-structor">
-//       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+//       {error && <p styles={{ color: "red", textAlign: "center" }}>{error}</p>}
 //       {success && (
-//         <p style={{ color: "green", textAlign: "center" }}>{success}</p>
+//         <p styles={{ color: "green", textAlign: "center" }}>{success}</p>
 //       )}
 
 //       <div className="signup" ref={signupRef}>
@@ -196,7 +196,7 @@
 
 //fully gd start
 // import { useRef, useState } from "react";
-// import axios from "axios";
+// import axiosInstance from "../api/axiosInstance";;
 // import { useNavigate } from "react-router-dom"; // used to redirect user after login
 // import "../styles/AuthForm.css"; // keep your existing CSS file
 
@@ -255,10 +255,10 @@
 //     }
 //   };
 
-//   // -------------------- AXIOS SETUP --------------------
+//   // -------------------- axiosInstance SETUP --------------------
 
-//   // Custom Axios instance to reuse base URL and include cookies
-//   const axiosInstance = axios.create({
+//   // Custom axiosInstance instance to reuse base URL and include cookies
+//   const axiosInstance = axiosInstance.create({
 //     baseURL: "http://localhost:5000/api", // backend URL
 //     withCredentials: true, // required to send/receive cookies for auth
 //   });
@@ -313,8 +313,8 @@
 //   return (
 //     <div className="form-structor">
 //       {/* Global message display */}
-//       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-//       {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
+//       {error && <p styles={{ color: "red", textAlign: "center" }}>{error}</p>}
+//       {success && <p styles={{ color: "green", textAlign: "center" }}>{success}</p>}
 
 //       {/* -------------------- SIGNUP FORM -------------------- */}
 //       <div className="signup" ref={signupRef}>
@@ -406,7 +406,7 @@
 
 //WORKING BUT MINUS
 // import { useRef, useState } from "react";
-// import axios from "axios";
+// import axiosInstance from "../api/axiosInstance";;
 // import "../styles/AuthForm.css";
 
 // const AuthForm = () => {
@@ -447,7 +447,7 @@
 //     }
 //   };
 
-//   const axiosInstance = axios.create({
+//   const axiosInstance = axiosInstance.create({
 //     baseURL: "http://localhost:5000/api",
 //     withCredentials: true,
 //   });
@@ -484,8 +484,8 @@
 
 //   return (
 //     <div className="form-structor">
-//       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-//       {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
+//       {error && <p styles={{ color: "red", textAlign: "center" }}>{error}</p>}
+//       {success && <p styles={{ color: "green", textAlign: "center" }}>{success}</p>}
 
 //       <div className="signup" ref={signupRef}>
 //         <h2 className="form-title" id="signup" onClick={handleSignupClick}>
@@ -563,7 +563,7 @@
 
 
 // import { useRef, useState } from "react"
-// import axios from "axios"
+// import axiosInstance from "../api/axiosInstance";
 // import { useNavigate } from "react-router-dom"
 // import "../styles/AuthForm.css"
 // import { FaEye, FaEyeSlash } from "react-icons/fa" // Importing eye icons
@@ -618,7 +618,7 @@
 //     }
 //   }
 
-//   const axiosInstance = axios.create({
+//   const axiosInstance = axiosInstance.create({
 //     baseURL: "http://localhost:5000/api",
 //     withCredentials: true,
 //   })
@@ -684,10 +684,10 @@
 //     <div className="form-wrapper">
 //       <div className="form-structor">
 //         {error && (
-//           <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+//           <p styles={{ color: "red", textAlign: "center" }}>{error}</p>
 //         )}
 //         {success && (
-//           <p style={{ color: "green", textAlign: "center" }}>{success}</p>
+//           <p styles={{ color: "green", textAlign: "center" }}>{success}</p>
 //         )}
 
 //         <div className="signup" ref={signupRef}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import axios from "axios"
+import axiosInstance from "../api/axiosInstance";
 import "../adminstyle/AdminProducts.css"
 import AddProductForm from "./AddProductForm"
 
@@ -26,7 +26,7 @@ function AdminProducts() {
   // Fetch all products with variants/colors/images
   useEffect(() => {
     console.log("Fetching all products...")
-    axios
+    axiosInstance
       .get("http://localhost:5000/api/products", {
         withCredentials: true,
       })
@@ -45,7 +45,7 @@ function AdminProducts() {
   const fetchProductDetails = async (id) => {
     console.log("Fetching product details for edit, id:", id)
     try {
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         `http://localhost:5000/api/products/${id}`,
         {
           withCredentials: true,
@@ -156,7 +156,7 @@ function AdminProducts() {
 
     try {
       // Update main product info
-      await axios.put(
+      await axiosInstance.put(
         `http://localhost:5000/api/products/${editingProduct}`,
         {
           name: editForm.name,
@@ -168,7 +168,7 @@ function AdminProducts() {
 
       // For each variant/color, update color info & images
       for (const color of editForm.variants) {
-        await axios.put(
+        await axiosInstance.put(
           `http://localhost:5000/api/productcolors/${color.id}`,
           {
             color_name: color.color_name,
@@ -182,7 +182,7 @@ function AdminProducts() {
       setEditingProduct(null)
 
       // Refresh product list
-      const res = await axios.get("http://localhost:5000/api/products", {
+      const res = await axiosInstance.get("http://localhost:5000/api/products", {
         withCredentials: true,
       })
       setProducts(res.data)
@@ -202,7 +202,7 @@ function AdminProducts() {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axiosInstance.delete(`http://localhost:5000/api/products/${id}`, {
         withCredentials: true,
       })
       setProducts(products.filter((prod) => prod.id !== id))
@@ -342,7 +342,7 @@ function AdminProducts() {
   const handleAddSave = async () => {
     try {
       // 1. Create product with name & category
-      const resProduct = await axios.post(
+      const resProduct = await axiosInstance.post(
         "http://localhost:5000/api/products",
         {
           name: addForm.name,
@@ -356,7 +356,7 @@ function AdminProducts() {
 
       // 2. Upload product images (assuming your backend supports batch upload or individual upload)
       for (const img of addForm.images) {
-        await axios.post(
+        await axiosInstance.post(
           "http://localhost:5000/api/product-images",
           {
             product_id: productId,
@@ -369,7 +369,7 @@ function AdminProducts() {
       // 3. For each variant, create variant, upload variant images
       for (const variant of addForm.variants) {
         // Create variant color
-        const resColor = await axios.post(
+        const resColor = await axiosInstance.post(
           "http://localhost:5000/api/productcolors",
           {
             product_id: productId,
@@ -381,7 +381,7 @@ function AdminProducts() {
 
         // Upload variant images
         for (const img of variant.images) {
-          await axios.post(
+          await axiosInstance.post(
             "http://localhost:5000/api/product-color-images",
             {
               product_color_id: colorId,
@@ -398,7 +398,7 @@ function AdminProducts() {
       setShowAddModal(false)
 
       // Refresh product list
-      const res = await axios.get("http://localhost:5000/api/products", {
+      const res = await axiosInstance.get("http://localhost:5000/api/products", {
         withCredentials: true,
       })
       setProducts(res.data)
@@ -537,7 +537,7 @@ function AdminProducts() {
                     <img
                       src={img.image_url}
                       alt={img.alt_text || ""}
-                      style={{
+                      styles={{
                         width: 80,
                         height: 80,
                         objectFit: "cover",
@@ -580,7 +580,7 @@ function AdminProducts() {
                         <img
                           src={img.image_url}
                           alt={img.alt_text || ""}
-                          style={{
+                          styles={{
                             width: 80,
                             height: 80,
                             objectFit: "cover",

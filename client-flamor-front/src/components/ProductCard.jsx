@@ -1,68 +1,119 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { Link } from "react-router-dom"
-import "./ProductCard.css"
-import { FaHeart, FaRegHeart } from "react-icons/fa"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ShoppingCart, Heart } from "lucide-react";
+import { toast } from "react-toastify";
+import { addToCart } from "../api/cart";
+import { addToWishlist } from "../api/wishlistApi";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import "../styles/ProductCard.css"; 
 
-const ProductCard = ({ product, addToCart, addToWishlist }) => {
-  const [inWishlist, setInWishlist] = useState(false)
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/wishlist", {
-          withCredentials: true,
-        })
+const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+  const { refreshCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
-        const wishlist = res.data.items || []
-        const found = wishlist.find(
-          (item) => String(item.product_id) === String(product.id)
-        )
-        setInWishlist(!!found)
-      } catch (err) {
-        console.error("Error fetching wishlist:", err)
-      }
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [addingToWishlist, setAddingToWishlist] = useState(false);
+
+  const imageUrl =
+    product.image_url ||
+    (product.Images &&
+      product.Images.length > 0 &&
+      product.Images[0].image_url) ||
+    "";
+  const altText =
+    product.alt_text ||
+    (product.Images &&
+      product.Images.length > 0 &&
+      product.Images[0].alt_text) ||
+    product.name;
+
+  const getImageUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http") || url.startsWith("https")) {
+      return url;
     }
+    return `${BASE_URL}${url}`;
+  };
 
-    fetchWishlist()
-  }, [product.id])
+  const handleAddToCart = async (e) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    if (addingToCart) return;
+    setAddingToCart(true);
+    try {
+      // Pass product_variant_id if available, else null
+      const productVariantId =
+        product.product_variant_id || product.variant_id || null;
+      await addToCart(product.id, 1, productVariantId);
+      refreshCart();
+      toast.success("Product added to cart");
+    } catch (err) {
+      console.error("Failed to add product to cart", err);
+      toast.error("Failed to add product to cart");
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  const handleAddToWishlist = async (e) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    if (addingToWishlist) return;
+    setAddingToWishlist(true);
+    try {
+      await addToWishlist(product.id);
+      toast.success("Added to wishlist");
+    } catch (err) {
+      toast.error("Failed to add to wishlist");
+    } finally {
+      setAddingToWishlist(false);
+    }
+  };
 
   return (
-    <div className="product-card">
-      <Link to={`/product/${product.id}`} className="product-link">
-        <div className="image-wrapper">
-          <img
-            src={product.image || product.images?.[0]?.url}
-            alt={product.name}
-            onError={(e) => {
-              e.target.src = "https://placehold.co/150x150?text=No+Image"
-            }}
+    <div
+      className="product-card"
+      onClick={() => navigate(`/product/${product.id}`)}
+      styles={{ cursor: "pointer" }}
+    >
+      {imageUrl && (
+        <picture>
+          <source
+            srcSet={getImageUrl(imageUrl).replace(/\.(jpg|jpeg|png)$/i, ".webp")}
+            type="image/webp"
           />
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              addToCart(product.id)
-            }}
-            className="add-to-cart-btn"
-          >
-            Add to Cart
-          </button>
+          <img
+            src={getImageUrl(imageUrl)}
+            alt={altText}
+            className="product-image"
+            loading="lazy"
+          />
+        </picture>
+      )}
+      <div className="hover-content">
+        <div className="details">
+          <h3>{product.name}</h3>
+          <p>${product.price ? Number(product.price).toFixed(2) : "N/A"}</p>
         </div>
-        <h3>{product.name}</h3>
-      </Link>
-
-      <h4>{product.description}</h4>
-      <p>${product.price}</p>
-
-      <button
-        onClick={() => addToWishlist(product.id, inWishlist, setInWishlist)}
-        className="wishlist-btn"
-      >
-        {inWishlist ? <FaHeart color="red" size={24} /> : <FaRegHeart size={24} />}
-      </button>
+        <button className="add-to-cart-btn" onClick={handleAddToCart} disabled={addingToCart}>
+          <ShoppingCart size={16} /> {addingToCart ? "Adding..." : "Add to cart"}
+        </button>
+        <button className="favorite-btn" name="Add to wishlist" onClick={handleAddToWishlist} disabled={addingToWishlist}>
+          <Heart size={20} /> {addingToWishlist ? "Adding..." : ""}
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductCard
+export default ProductCard;

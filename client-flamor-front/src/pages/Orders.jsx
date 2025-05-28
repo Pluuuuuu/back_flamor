@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";;
 import { useNavigate } from "react-router-dom";
 
 const Orders = ({ onReorder }) => {
@@ -11,7 +11,7 @@ const Orders = ({ onReorder }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders/my", {
+        const res = await axiosInstance.get("http://localhost:5000/api/orders/my", {
           withCredentials: true,
         });
         setOrders(res.data.orders || []);
@@ -71,7 +71,7 @@ const Orders = ({ onReorder }) => {
       )}
 
       {reordered && (
-        <button onClick={() => navigate("/cart")} style={{ marginTop: "1rem" }}>
+        <button onClick={() => navigate("/cart")} styles={{ marginTop: "1rem" }}>
           Go to Cart
         </button>
       )}

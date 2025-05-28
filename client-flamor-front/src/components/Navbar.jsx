@@ -3,7 +3,7 @@ import logo from "../assets/logo.png"
 import cart from "../assets/cart.png"
 import icon from "../assets/icon.jpg"
 import heart from "../assets/heart.png"
-import "./Navbar.css" // Optional: for styling
+import "./Navbar.css" // Optional: for styles
 import { Link } from "react-router-dom"
 
 const Navbar = () => {
@@ -12,7 +12,7 @@ const Navbar = () => {
       <img id="logo" src={logo} alt="Logo" />
       <div id="top-banner-right">
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -23,7 +23,7 @@ const Navbar = () => {
           Home
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -34,7 +34,7 @@ const Navbar = () => {
           Shop
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}
@@ -45,7 +45,7 @@ const Navbar = () => {
           About Us
         </Link>
         <Link
-          style={{
+          styles={{
             textDecoration: "none",
             cursor: "pointer",
           }}

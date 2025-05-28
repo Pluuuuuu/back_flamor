@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 
 const BASE_URL = "http://localhost:5000";
 import "../styles/checkout.css";
@@ -24,7 +24,7 @@ const CheckoutPage = () => {
 
   const fetchCartTotal = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/cart`, {
+      const res = await axiosInstance.get(`${BASE_URL}/api/cart`, {
         withCredentials: true,
       });
       setCartTotal(res.data.total);
@@ -47,7 +47,7 @@ const CheckoutPage = () => {
 
     try {
       // Save shipping info
-      const shippingRes = await axios.post(`${BASE_URL}/api/shipping`, shippingInfo, {
+      const shippingRes = await axiosInstance.post(`${BASE_URL}/api/shipping`, shippingInfo, {
         withCredentials: true,
       });
       const shipping = shippingRes.data.shipping;
@@ -59,7 +59,7 @@ const CheckoutPage = () => {
         payment_method: paymentMethod,
       };
 
-      await axios.post(`${BASE_URL}/api/orders`, orderPayload, { withCredentials: true });
+      await axiosInstance.post(`${BASE_URL}/api/orders`, orderPayload, { withCredentials: true });
 
       setMessage("✅ Order placed successfully!");
     } catch (err) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import '../adminstyle/AddProductForm.css';
 const AddProductForm = () => {
   const [categories, setCategories] = useState([]);
@@ -12,9 +12,9 @@ const AddProductForm = () => {
   });
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchAllCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/categories", {
+        const res = await axiosInstance.get("http://localhost:5000/api/categories", {
           withCredentials: true,
         });
         setCategories(Array.isArray(res.data) ? res.data : []);
@@ -23,7 +23,7 @@ const AddProductForm = () => {
         setCategories([]);
       }
     };
-    fetchCategories();
+    fetchAllCategories();
   }, []);
 
   const handleAddColor = () => {
@@ -129,7 +129,7 @@ const AddProductForm = () => {
     console.log("Submitting product data:", dataToSubmit);
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:5000/api/products",
         dataToSubmit,
         {
@@ -201,7 +201,7 @@ const AddProductForm = () => {
       {productData.variants.map((color, idx) => (
         <div
           key={idx}
-          style={{ border: "1px solid #ccc", padding: "10px", margin: "10px 0" }}
+          styles={{ border: "1px solid #ccc", padding: "10px", margin: "10px 0" }}
         >
           <input
             type="text"
