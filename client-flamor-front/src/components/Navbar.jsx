@@ -76,7 +76,7 @@ const Navbar = () => {
             onClick={() =>
               window.scrollTo({ top: 0, behavior: "smooth" })
             }
-            to="/authform"
+            to="/profile"
           >
             <img
               className="top-banner-img img-usr"
