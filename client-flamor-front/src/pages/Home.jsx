@@ -169,10 +169,10 @@ export default function Home() {
               />
             ))}
         </div> */}
-        {popup.visible && (
+        {/* {popup.visible && (
           <div className="popup-notification">{popup.message}</div>
         )}
-      </section>
+      </section> */}
 
       <section className="fashion-banner">
         <div className="fashion-banner-content">
