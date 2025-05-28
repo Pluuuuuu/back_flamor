@@ -1,23 +1,23 @@
-import "../styles/Home.css";
-import modelImage from "../assets/model.png";
-import circles from "../assets/CIRCLES.png";
-import ellipse from "../assets/EllipseS.svg";
-import flourneck from "../assets/flowerneck.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import Button from "../components/Button";
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../api/axiosInstance";
-import ProductCard from "../components/ProductCard";
-import { Link } from "react-router-dom";
-import { fetchCategories } from "../api/categoryApi";
+import "../styles/Home.css"
+import modelImage from "../assets/model.png"
+import circles from "../assets/CIRCLES.png"
+import ellipse from "../assets/EllipseS.svg"
+import flourneck from "../assets/flowerneck.png"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
+import Button from "../components/Button"
+import React, { useEffect, useState } from "react"
+import axiosInstance from "../api/axiosInstance"
+import ProductCard from "../components/ProductCard"
+import { Link } from "react-router-dom"
+import { fetchCategories } from "../api/categoryApi"
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [userRole, setUserRole] = useState(null);
-  const [popup, setPopup] = useState({ message: "", visible: false });
-  const [inWishlist, setInWishlist] = useState(false); // Added this to fix wishlist toggle
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [userRole, setUserRole] = useState(null)
+  const [popup, setPopup] = useState({ message: "", visible: false })
+  const [inWishlist, setInWishlist] = useState(false) // Added this to fix wishlist toggle
 
   // Fetch user role
   useEffect(() => {
@@ -26,15 +26,15 @@ export default function Home() {
         withCredentials: true,
       })
       .then((res) => {
-        setUserRole(res.data.role);
+        setUserRole(res.data.role)
       })
       .catch((err) => {
         if (err.response?.status !== 401) {
-          console.error("Unexpected error:", err);
+          console.error("Unexpected error:", err)
         }
-        setUserRole(null); // Not logged in
-      });
-  }, []);
+        setUserRole(null) // Not logged in
+      })
+  }, [])
 
   // Fetch all products with safety check
   useEffect(() => {
@@ -42,39 +42,39 @@ export default function Home() {
       .get("http://localhost:5000/api/products")
       .then((res) => {
         if (Array.isArray(res.data)) {
-          setProducts(res.data);
+          setProducts(res.data)
         } else if (Array.isArray(res.data.products)) {
           // Fallback if data is wrapped
-          setProducts(res.data.products);
+          setProducts(res.data.products)
         } else {
-          console.error("Expected array but got:", res.data);
-          setProducts([]);
+          console.error("Expected array but got:", res.data)
+          setProducts([])
         }
       })
       .catch((err) => {
-        console.error("Failed to fetch products:", err);
-        setProducts([]);
-      });
-  }, []);
+        console.error("Failed to fetch products:", err)
+        setProducts([])
+      })
+  }, [])
 
   // Fetch categories
   useEffect(() => {
     const loadCategories = async () => {
-      const data = await fetchCategories();
-      setCategories(data);
-    };
-    loadCategories();
-  }, []);
+      const data = await fetchCategories()
+      setCategories(data)
+    }
+    loadCategories()
+  }, [])
 
   const showPopup = (message) => {
-    setPopup({ message, visible: true });
-    setTimeout(() => setPopup({ message: "", visible: false }), 3000);
-  };
+    setPopup({ message, visible: true })
+    setTimeout(() => setPopup({ message: "", visible: false }), 3000)
+  }
 
   const handleAddToCart = (productId) => {
     if (userRole !== "customer") {
-      showPopup("You must be logged in as a customer to add to cart.");
-      return;
+      showPopup("You must be logged in as a customer to add to cart.")
+      return
     }
 
     axiosInstance
@@ -87,18 +87,18 @@ export default function Home() {
         { withCredentials: true }
       )
       .then(() => {
-        showPopup("Product added to cart!");
+        showPopup("Product added to cart!")
       })
       .catch((err) => {
-        console.error("Add to cart failed:", err);
-        showPopup("Failed to add to cart.");
-      });
-  };
+        console.error("Add to cart failed:", err)
+        showPopup("Failed to add to cart.")
+      })
+  }
 
   const handleAddToWishlist = async (productId) => {
     if (userRole !== "customer") {
-      showPopup("You must be logged in as a customer to add to wishlist.");
-      return;
+      showPopup("You must be logged in as a customer to add to wishlist.")
+      return
     }
     try {
       if (!inWishlist) {
@@ -106,28 +106,36 @@ export default function Home() {
           "http://localhost:5000/api/wishlist",
           { product_id: productId },
           { withCredentials: true }
-        );
+        )
       } else {
         await axiosInstance.delete(
           `http://localhost:5000/api/wishlist/${productId}`,
           { withCredentials: true }
-        );
+        )
       }
-      setInWishlist(!inWishlist);
+      setInWishlist(!inWishlist)
     } catch (err) {
-      console.error("Error updating wishlist:", err);
+      console.error("Error updating wishlist:", err)
     }
-  };
+  }
 
   return (
     <>
       <section className="korean-container">
         <h3 className="add-sparkle">ADD THE SPARKLE</h3>
         <h1 className="title">FLAMORY</h1>
-        <Button className="pinkBtn">Steal the Look</Button>
-        <Button className="lightBtn" backgroundColor="#f2e0df" color="#d991a4">
-          Learn More
-        </Button>
+        <Link
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          to="/shop"
+        >
+          <Button className="pinkBtn">Steal the Look</Button>
+        </Link>
+        <Link
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          to="/about"
+        >
+          <Button className="lightBtn">Learn More</Button>
+        </Link>
         <button id="vertical-btn">FASHIONABLE</button>
         <button id="arrow-btn">
           <FontAwesomeIcon icon={faArrowRight} />
@@ -169,7 +177,7 @@ export default function Home() {
               />
             ))}
         </div> */}
-        {/* {popup.visible && (
+      {/* {popup.visible && (
           <div className="popup-notification">{popup.message}</div>
         )}
       </section> */}
@@ -195,5 +203,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  );
+  )
 }

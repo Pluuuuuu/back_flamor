@@ -38,6 +38,9 @@
   position: absolute;
   top: 530px;
   right: 855px;
+  z-index: 10;
+  background-color: #d991a4;
+  color: white;
 }
 
 .lightBtn {
@@ -46,6 +49,7 @@
   position: absolute;
   top: 530px;
   right: 725px;
+  z-index: 10;
 }
 
 #pink-square-behind {
@@ -137,9 +141,9 @@
 
 .home-categories-container {
   padding: 40px 20px;
-  background-color: #fafafa;
   width: 100%;
   box-sizing: border-box;
+  margin-bottom: 5rem;
 }
 
 .home-categories-title {
@@ -170,7 +174,7 @@
 
 .home-category-card {
   aspect-ratio: 1;
-  width: 80%; 
+  width: 80%;
   max-width: 400px;
   overflow: hidden;
   display: flex;
@@ -204,7 +208,6 @@
 
 .featured-container {
   padding: 40px 20px;
-  background-color: #fafafa;
   width: 100%;
   box-sizing: border-box;
 }
@@ -263,7 +266,6 @@
 .fashion-banner {
   position: relative;
   padding: 2rem;
-  background-color: #f9f9f9;
   display: flex;
   justify-content: center;
 }
@@ -340,8 +342,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
 }
-.home-category-card img
- {
+.home-category-card img {
   width: 100%;
   /* height: 150px; */
   object-fit: contain;

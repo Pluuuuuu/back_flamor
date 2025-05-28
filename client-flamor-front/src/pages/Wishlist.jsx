@@ -94,7 +94,7 @@ export default function Wishlist() {
           </div>
 
           <div className="wishlist-item-actions">
-            <Button
+            {/* <Button
               onClick={(e) => {
                 e.stopPropagation(); // prevent triggering parent onClick
                 handleAddToCart(item.id, item.Product.id);
@@ -103,7 +103,7 @@ export default function Wishlist() {
               className="btn-add-to-cart"
             >
               {addingIds[item.Product.id] ? "Adding..." : "Add to Cart"}
-            </Button>
+            </Button> */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
