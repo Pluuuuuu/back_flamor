@@ -54,7 +54,7 @@ export default function Cart() {
   const handleCheckout = () => {
     if (checkingOut) return;
     setCheckingOut(true);
-    navigate("/shipping");
+    navigate("/Checkout");
   };
 
   if (loading) return <p>Loading cart...</p>;

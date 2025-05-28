@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -28,6 +27,7 @@ const Product = lazy(() => import('./pages/Product'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const ProductDetails = lazy(() => import('./pages/ProductDetails'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
+const ProductReviews = lazy(() => import('./pages/ProductReviews'));
 
 // Admin Pages
 const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
@@ -37,6 +37,9 @@ const AdminUsers = lazy(() => import('./admin/AdminUsers'));
 const AdminCategory = lazy(() => import('./admin/AdminCategory'));
 const AdminProducts = lazy(() => import('./admin/AdminProducts'));
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const AdminReview = lazy(() => import('./admin/AdminReview'));
+const AdminShippingPage = lazy(() => import('./admin/AdminShippingPage'));
+const ShippingList = lazy(() => import('./admin/ShippingList'));
 
 // Layout-aware component
 function AppLayout() {
@@ -62,6 +65,7 @@ function AppLayout() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/reviews" element={<ProductReviews />} />
 
         {/* Admin Routes */}
         <Route
@@ -92,6 +96,18 @@ function AppLayout() {
           path="/admin/profile"
           element={<AdminLayout><Profile /></AdminLayout>}
         />
+        <Route
+          path="/admin/adminReview "
+          element={<AdminLayout><AdminReview /></AdminLayout>}
+        />
+        <Route
+          path="/admin/adminShippingPage"
+          element={<AdminLayout><AdminShippingPage /></AdminLayout>}
+        />
+        <Route
+          path="/admin/shippingList"
+          element={<AdminLayout><ShippingList /></AdminLayout>}
+        />
       </Routes>
 
       {!isAdminRoute && <Footer />}
@@ -108,7 +124,7 @@ export default function App() {
           <WishlistProvider>
             <Suspense fallback={<div>Loading...</div>}>
               <AppLayout />
-              <ToastContainer />
+              <ToastContainer position="top-center" autoClose={3000} />
             </Suspense>
           </WishlistProvider>
         </CartProvider>
