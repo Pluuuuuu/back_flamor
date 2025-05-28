@@ -37,7 +37,7 @@ const ProductCard = ({ product }) => {
     e.preventDefault()
     e.stopPropagation()
     if (!isAuthenticated) {
-      navigate("/login")
+      navigate("/AuthForm")
       return
     }
     if (addingToCart) return
@@ -60,7 +60,7 @@ const ProductCard = ({ product }) => {
     e.preventDefault()
     e.stopPropagation()
     if (!isAuthenticated) {
-      navigate("/login")
+      navigate("/AuthForm")
       return
     }
     if (addingToWishlist) return

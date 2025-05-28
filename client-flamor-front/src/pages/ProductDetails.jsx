@@ -96,7 +96,7 @@ export default function ProductDetails() {
   const handleAddToCart = async (colorId) => {
     // console.log("handleAddToCart called with selectedImage:", selectedImage);
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("/AuthForm");
       return;
     }
     let matchedColorId = null;
@@ -133,7 +133,7 @@ export default function ProductDetails() {
 
   const handleAddToWishlist = async () => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("/AuthForm");
       return;
     }
     if (addingToWishlist) return;
