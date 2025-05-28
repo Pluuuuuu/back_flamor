@@ -40,7 +40,7 @@ const ActionsFormatter = ({
               background: "none",
               border: "none",
               cursor: "pointer",
-              color: "#007bff",
+              color: "#594548",
               padding: 4,
             }}
           >
@@ -641,7 +641,7 @@ const AdminProducts = () => {
                     height="20"
                     viewBox="0 0 24 24"
                     width="20"
-                    fill="#007bff"
+                    fill="#594548"
                   >
                     <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM5 5h14v14H5V5zm7 3c-1.66 0-3 1.34-3 3 0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.66-1.34-3-3-3zm0 8c-2.33 0-7 1.17-7 3.5V19h14v-1.5c0-2.33-4.67-3.5-7-3.5z" />
                   </svg>
@@ -1045,7 +1045,7 @@ const AdminProducts = () => {
                 <button
                   onClick={handleAddColorToEdit}
                   style={{
-                    backgroundColor: "#007bff",
+                    backgroundColor: "#594548",
                     color: "white",
                     border: "none",
                     borderRadius: 4,
@@ -1075,7 +1075,7 @@ const AdminProducts = () => {
               <button
                 onClick={() => setShowAddColorInputs(true)}
                 style={{
-                  backgroundColor: "#007bff",
+                  backgroundColor: "#594548",
                   color: "white",
                   border: "none",
                   borderRadius: 4,

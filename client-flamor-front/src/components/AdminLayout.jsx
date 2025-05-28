@@ -21,6 +21,7 @@ const AdminLayout = ({ children }) => {
           <NavLink to="/AdminUsers" style={linkStyle}>Users</NavLink>
           <NavLink to="/AdminOrders" style={linkStyle}>Orders</NavLink>
           <NavLink to="/AdminAddProductForm" style={linkStyle}>Shipments</NavLink> */}
+          <NavLink to="/AdminUsers" style={linkStyle}>Users</NavLink>
           <NavLink to="/AdminCategory" style={linkStyle}>Category</NavLink>
           <NavLink to="/AdminProducts" style={linkStyle}>Products</NavLink>
           <NavLink to="/admin/profile" style={linkStyle}>Profile</NavLink>

@@ -189,7 +189,7 @@
 .home-category-card img {
   width: 100%;
   height: 80%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .home-category-card h3 {
@@ -340,11 +340,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
 }
-
-.home-category-card img {
+.home-category-card img
+ {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
+  /* height: 150px; */
+  object-fit: contain;
   border-radius: 8px;
 }
 
